@@ -7,8 +7,9 @@
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 
-#include "entity.h"
-#include "player.h"
+#include "bu_entity.h"
+#include "bu_player.h"
+#include "bu_npc.h"
 
 int main(int argc, char * argv[])
 {
@@ -18,6 +19,7 @@ int main(int argc, char * argv[])
     Sprite *sprite;
 	Entity *ent;
 	Entity *player;
+	NPC *npc;
 	Vector2D scale = vector2d(0.5, 0.5);
     
     int mx,my;
@@ -42,16 +44,19 @@ int main(int argc, char * argv[])
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
-	
-    sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+	slog_sync();
+
+    sprite = gf2d_sprite_load_image("images/locker_room.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
 
 	player = player_spawn(vector2d((1366 * 0.5)-200, (786 * 0.5)-200));
+	npc = npc_spawn(0, vector2d(200, (786 * 0.5) - 200));
+	if (!npc)slog("npc null");
 	ent = entity_new();
 	if (!ent)slog("entity null");
 	ent->sprite = gf2d_sprite_load_all("images/ed210_top.png", 128, 128, 16);
 	if (!ent->sprite) slog("sprite null");
-
+	slog_sync();
     /*main game loop*/
     while(!done)
     {
@@ -75,6 +80,7 @@ int main(int argc, char * argv[])
             
 			entity_draw(ent);
 			entity_draw(player);
+			entity_draw(npc->ent);
             //UI elements last
             gf2d_sprite_draw(
                 mouse,

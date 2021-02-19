@@ -1,0 +1,23 @@
+{
+    "name":"Aname",
+    "level":1,
+    "life":10,
+    "life_max":10,
+    "stamina":10,
+    "stamina_max":10,
+    "stamina_regen":1,
+    "strength":1,
+    "strength_max":100,
+    "agility":1,
+    "agility_max":100,
+    "willpower":1,
+    "willpower_max":100,
+    "punch":1,
+    "punch_max":100,
+    "kick":1,
+    "kick_max":100,
+    "weapon":1,
+    "weapon_max":100,
+    "throwing":1,
+    "throwing_max":100
+}

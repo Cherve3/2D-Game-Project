@@ -1,6 +1,6 @@
 #include "simple_logger.h"
 
-#include "entity.h"
+#include "bu_entity.h"
 
 typedef struct
 {

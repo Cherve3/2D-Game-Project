@@ -1,0 +1,25 @@
+{
+    "levels":{
+        "locker_room":
+        {
+            "background": "images/backgrounds/locker_room.png"
+        },
+        "main_entrance":
+        {
+            "background": "images/backgrounds/main_entrance.png"
+        },
+        "front_lawn":
+        {
+            "background": "images/backgrounds/front_lawn.png"
+        },
+        "downtown":
+        {
+            "background": "images/backgrounds/downtown.png"
+        },
+        "shop":
+        {
+            "background": "images/backgrounds/shop.png"
+        }
+    }
+
+}

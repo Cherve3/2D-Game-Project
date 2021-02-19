@@ -1,7 +1,7 @@
 
 #include "simple_logger.h"
 
-#include "player.h"
+#include "bu_player.h"
 
 void player_update(Entity *self)
 {
