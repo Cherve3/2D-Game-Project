@@ -125,4 +125,16 @@ void entity_draw(Entity *ent)
 		(Uint32)ent->frame);
 }
 
+void entity_draw_all()
+{
+	int i;
+	for (i = 0; i < entity_manager.max_entities; i++)
+	{
+		if (!entity_manager.entity_list[i]._inuse) continue;
+
+		slog("Entity: %i", i);
+		entity_draw(&entity_manager.entity_list[i]);
+	}
+}
+
 /*eol@eof*/

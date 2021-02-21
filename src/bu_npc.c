@@ -9,9 +9,10 @@
 #include "bu_npc.h"
 
 static NPC *npc = NULL;
+static Uint8 npc_count = 0;
 static SJson *npc_info = NULL;
 
-void print_stats();
+void print_npc_stats();
 void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style);
 
 void npc_load_json()
@@ -20,42 +21,43 @@ void npc_load_json()
 	if (!npc_info)
 		slog("npc info null");
 }
+
 void npc_update(Entity *self)
 {
-	self->position.x += 2 * cos(30 * GFC_DEGTORAD) *.06;
-	self->position.y -= 2 * sin(30 * GFC_DEGTORAD) *.05;
+	//self->position.x += 2 * cos(30 * GFC_DEGTORAD) *.06;
+	//self->position.y -= 2 * sin(30 * GFC_DEGTORAD) *.05;
 }
 
-NPC *npc_spawn(NPCType type, FightStyle style, Vector2D position)
+void npc_spawn(NPCType type, FightStyle style, Vector2D position)
 {	
 	if (!npc)
-		npc = gfc_allocate_array(sizeof(NPC), 10);
+		npc = (NPC*)gfc_allocate_array(sizeof(NPC), 10);
 
 
-	npc[0].ent = entity_new();
-	if (!npc[0].ent)
+	npc[npc_count].ent = entity_new();
+	if (!npc[npc_count].ent)
 	{
 		slog("failed to create npc entity");
 		slog_sync();
 		return NULL;
 	}
 
-	npc->ent->sprite = gf2d_sprite_load_all("images/ed210_top.png", 128, 128, 16);
-	npc->ent->frameRate = 0.1;
-	npc->ent->frameCount = 16;
-	npc->ent->update = npc_update;
+	npc[npc_count].ent->sprite = gf2d_sprite_load_all("images/ed210_top.png", 128, 128, 16);
+	npc[npc_count].ent->frameRate = 0.1;
+	npc[npc_count].ent->frameCount = 16;
+	npc[npc_count].ent->update = npc_update;
 
 	vector2d_copy(npc->ent->position, position);
 	
-	npc->fightStyle = style;
-	npc->type = type;
-	generate_npc_stats(&npc->stats, type, style);
-	npc->isHostile = false;
+	npc[npc_count].fightStyle = style;
+	npc[npc_count].type = type;
+	generate_npc_stats(&npc[npc_count].stats, type, style);
+	npc[npc_count].isHostile = false;
 
 	if (style != Friendly)
-		npc->isHostile = true;
+		npc[npc_count].isHostile = true;
 	
-	return npc;
+	npc_count++;
 }
 
 void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style)
@@ -136,12 +138,12 @@ void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style)
 		stats->throwing += 10;
 	}
 
-	print_stats();
+	print_npc_stats();
 }
 
-void print_stats()
+void print_npc_stats()
 {
-
+	slog("NPC stats:");
 	slog("           Level: %i", npc[0].stats.level);
 	slog("           Money: %s", npc[0].stats.money);
 

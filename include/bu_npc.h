@@ -63,7 +63,7 @@ void npc_update(Entity *self);
  * @param position The initial position of the npc entity
  * @return A pointer to the npc entity
  */
-NPC *npc_spawn(NPCType type, Vector2D position);
+void npc_spawn(NPCType type, FightStyle style, Vector2D position);
 
 /**
 * @brief Frees all the npc data

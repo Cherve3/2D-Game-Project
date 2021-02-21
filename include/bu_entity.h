@@ -28,29 +28,35 @@ void entity_manager_init(Uint32 max_entities);
 /**
  * @brief Update all entites
  */
-void entity_manager_update_entites();
+void entity_manager_update_entities();
 
 /**
-* @brief free all entities in the system and destroy entity manager
-*/
+ * @brief free all entities in the system and destroy entity manager
+ */
 void entity_manager_free();
 
 /**
-* @brief allocate an entity, initialize it to zero and return a pointer to it
-* @return NULL on error (see logs) or a pointer to an initialized entity.
-*/
+ * @brief allocate an entity, initialize it to zero and return a pointer to it
+ * @return NULL on error (see logs) or a pointer to an initialized entity.
+ */
 Entity *entity_new();
 
 /**
-* @brief frees provided entity
-* @param ent the entity to free
-*/
+ * @brief frees provided entity
+ * @param ent the entity to free
+ */
 void entity_free(Entity *ent);
 
 /**
-* @brief draws an entity to the current render frame
-* @param ent the entity to draw
-*/
+ * @brief draws an entity to the current render frame
+ * @param ent the entity to draw
+ */
 void entity_draw(Entity *ent);
+
+/**
+ * @brief draws all entities that are in use to the current render frame
+ */
+void entity_draw_all();
+
 
 #endif

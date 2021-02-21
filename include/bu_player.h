@@ -7,6 +7,7 @@ typedef struct{
 	char* name;
 
 	Uint8 level;
+	Uint8 money;
 
 	Uint8 life;
 	Uint8 life_max;
@@ -36,13 +37,14 @@ typedef struct
 {
 	Entity *ent;
 	PlayerStats stats;
+	Uint8	player_number;
 }Player;
 
 /**
  * @brief Spawns a player.
  * @param position The x and y posiiton of the player on the screen.
  */
-Entity *player_spawn(Vector2D position);
+Player *player_spawn(Vector2D position);
 
 /**
 * @brief Update the player.
