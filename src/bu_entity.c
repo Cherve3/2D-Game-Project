@@ -131,8 +131,6 @@ void entity_draw_all()
 	for (i = 0; i < entity_manager.max_entities; i++)
 	{
 		if (!entity_manager.entity_list[i]._inuse) continue;
-
-		slog("Entity: %i", i);
 		entity_draw(&entity_manager.entity_list[i]);
 	}
 }

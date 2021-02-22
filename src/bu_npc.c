@@ -138,7 +138,7 @@ void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style)
 		stats->throwing += 10;
 	}
 
-	print_npc_stats();
+	//print_npc_stats();
 }
 
 void print_npc_stats()

@@ -5,7 +5,7 @@
 
 typedef struct
 {
-	Uint8   _inuse;
+	//Uint8   _inuse;
 	char   *name;
 	Sprite *background;
 	Sprite *sprite;
@@ -16,5 +16,7 @@ void level_free(char *name);
 
 void level_load(char *name);
 
+void level_draw();
 
+Level *get_level();
 #endif

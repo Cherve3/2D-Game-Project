@@ -10,6 +10,7 @@
 #include "bu_entity.h"
 #include "bu_player.h"
 #include "bu_npc.h"
+#include "bu_level.h"
 
 int main(int argc, char * argv[])
 {
@@ -47,13 +48,16 @@ int main(int argc, char * argv[])
     /*demo setup*/
 	
 
-    sprite = gf2d_sprite_load_image("images/locker_room.png");
+    sprite = gf2d_sprite_load_image("images/backgrounds/locker_room.png");
+
+	level_load("locker_room.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
 
 	player = player_spawn(vector2d((1366 * 0.5)-200, (786 * 0.5)-200));
-	if (!player)slog("player null");slog_sync();
+	if (!player)slog("player null");
 
 	npc_spawn(0, 0, vector2d(200, (786 * 0.5) - 200));
+	npc_spawn(1, 0, vector2d(100, (786 * 0.5) - 200));
 
 	slog_sync();
     /*main game loop*/
@@ -71,10 +75,14 @@ int main(int argc, char * argv[])
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
+		
+		//gf2d_sprite_draw(sprite, vector2d(0, 0), &scale, NULL, NULL, NULL, NULL, NULL);
 
-		gf2d_sprite_draw(sprite, vector2d(0, 0), &scale, NULL, NULL, NULL, NULL, NULL);
+		gf2d_sprite_draw(get_level()->sprite, vector2d(0, 0), &scale, NULL, NULL, NULL, NULL, NULL);
 
+		level_draw();
 		entity_draw_all();
+
 
         //UI elements last
         gf2d_sprite_draw(

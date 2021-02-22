@@ -51,10 +51,10 @@ void generate_player_stats(PlayerStats *stats)
 {
 	if (!player_info)
 		player_load_json();
-
-	player[player_count].stats.name = sj_get_string_value(sj_object_get_value(player_info, "name"));
+	
+	stats->name = sj_get_string_value(sj_object_get_value(player_info, "name"));
+	sj_get_integer_value(sj_object_get_value(player_info, "money"), &stats->money);
 	sj_get_integer_value(sj_object_get_value(player_info, "level"), &stats->level);
-	//sj_get_integer_value(sj_object_get_value(player_info, "money"),			&stats->money);
 	sj_get_integer_value(sj_object_get_value(player_info, "life"), &stats->life);
 	sj_get_integer_value(sj_object_get_value(player_info, "life_max"), &stats->life_max);
 	sj_get_integer_value(sj_object_get_value(player_info, "stamina"), &stats->stamina);
@@ -76,7 +76,7 @@ void generate_player_stats(PlayerStats *stats)
 	sj_get_integer_value(sj_object_get_value(player_info, "throwing"), &stats->throwing);
 	sj_get_integer_value(sj_object_get_value(player_info, "throwing_max"), &stats->throwing_max);
 
-	print_player_stats();
+	//print_player_stats();
 }
 
 void print_player_stats()
