@@ -1,5 +1,6 @@
 #include "simple_logger.h"
 
+#include "bu_camera.h"
 #include "bu_entity.h"
 
 typedef struct
@@ -101,6 +102,7 @@ void entity_free(Entity *ent)
 
 void entity_draw(Entity *ent)
 {
+	Vector2D drawPosition, offset;
 	if (!ent)
 	{
 		slog("cannot draw NULL entity");
@@ -110,19 +112,32 @@ void entity_draw(Entity *ent)
 	{
 		ent->draw(ent);
 	}
-	if (ent->sprite == NULL)
+	else
 	{
-		return;
+		if (ent->sprite == NULL)
+		{
+			return;
+		}
+		offset = camera_get_offset();
+		/*
+		if (!camera_rect_on_screen(gfc_sdl_rect(ent->position.x, ent->position.y, ent->sprite->frame_w, ent->sprite->frame_h)));
+		{
+			slog("Entity %s not on screen", ent->sprite->filepath);
+			return;
+		}*/
+		drawPosition.x = ent->position.x + offset.x;
+		drawPosition.y = ent->position.y + offset.y;
+//		slog("Position: %f,%f", drawPosition.x, drawPosition.y);
+		gf2d_sprite_draw(
+			ent->sprite,
+			drawPosition,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			(Uint32)ent->frame);
 	}
-	gf2d_sprite_draw(
-		ent->sprite,
-		ent->position,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		(Uint32)ent->frame);
 }
 
 void entity_draw_all()

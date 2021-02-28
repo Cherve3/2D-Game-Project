@@ -8,6 +8,9 @@ typedef struct
 	//Uint8   _inuse;
 	char   *name;
 	Sprite *background;
+	float width;
+	float height;
+	Vector2D position;
 	Sprite *sprite;
 
 }Level;

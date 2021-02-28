@@ -6,7 +6,10 @@
 
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
+#include "gf2d_draw.h"
 
+#include "bu_camera.h"
+#include "bu_ui.h"
 #include "bu_entity.h"
 #include "bu_player.h"
 #include "bu_npc.h"
@@ -19,43 +22,54 @@ int main(int argc, char * argv[])
     const Uint8 * keys;
     Sprite *sprite;
 
-	Player *player;
-	NPC *npc;
+	SDL_Rect rect;
+	Vector4D vec;
 
 	Vector2D scale = vector2d(0.5, 0.5);
-    
+	Vector2D resolution = vector2d(1366 * 0.5, 786 * 0.5);
+	
     int mx,my;
     float mf = 0;
     Sprite *mouse;
     Vector4D mouseColor = {255,100,255,200};
     
-    /*program initializtion*/
+    /*program initialization*/
     init_logger("gf2d.log");
     slog("---==== BEGIN ====---");
     gf2d_graphics_initialize(
         "gf2d",
-        1366/2,
-        786/2,
-        1366/2,
-        786/2,
+        NULL,
+		NULL,
+		resolution.x,
+		resolution.y,
         vector4d(0,0,0,255),
         0);
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
 	entity_manager_init(100);
+	ui_init();
     SDL_ShowCursor(SDL_DISABLE);
-    
-    /*demo setup*/
-	
 
-    sprite = gf2d_sprite_load_image("images/backgrounds/locker_room.png");
+	// Camera
+	camera_set_dimensions( vector2d(resolution.x, resolution.y) );
+	camera_set_position( vector2d(0, 0) );
+	camera_set_bounds(vector2d(1920, 1080));
 
-	level_load("locker_room.png");
+	rect.x = resolution.x / 6;
+	rect.y = resolution.y / 6;
+	rect.w = resolution.x / 1.5;
+	rect.h = resolution.y / 1.5;
+	vec.w = 255;
+	vec.x = 0;
+	vec.y = 0;
+	vec.z = 0;
+
+	// Level
+	level_load("outside.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
-
-	player = player_spawn(vector2d((1366 * 0.5)-200, (786 * 0.5)-200));
-	if (!player)slog("player null");
-
+	
+	// Entity spawns
+	player_spawn(vector2d((resolution.x)-600, (resolution.y)-250));
 	npc_spawn(0, 0, vector2d(200, (786 * 0.5) - 200));
 	npc_spawn(1, 0, vector2d(100, (786 * 0.5) - 200));
 
@@ -76,12 +90,21 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
 		
-		//gf2d_sprite_draw(sprite, vector2d(0, 0), &scale, NULL, NULL, NULL, NULL, NULL);
+		if (keys[SDL_SCANCODE_UP])
+			camera_move(vector2d(0, -1));
+		if (keys[SDL_SCANCODE_DOWN])
+			camera_move(vector2d(0, 1));
+		if (keys[SDL_SCANCODE_LEFT])
+			camera_move(vector2d(-1, 0));
+		if (keys[SDL_SCANCODE_RIGHT])
+			camera_move(vector2d(1, 0));
 
-		gf2d_sprite_draw(get_level()->sprite, vector2d(0, 0), &scale, NULL, NULL, NULL, NULL, NULL);
 
 		level_draw();
+		gf2d_draw_rect(rect, vec);
+
 		entity_draw_all();
+		ui_draw(resolution);
 
 
         //UI elements last
