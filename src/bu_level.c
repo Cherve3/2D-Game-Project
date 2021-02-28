@@ -34,6 +34,11 @@ void level_load(char *name)
 		level->background = gf2d_sprite_load_image("images/backgrounds/outside.png");
 		level->name = name;
 	}
+	if (strcmp(name, "shop.png") == 0)
+	{
+		level->background = gf2d_sprite_load_image("images/backgrounds/shop.png");
+		level->name = name;
+	}
 	
 	if (!level->background)
 			slog("Could not find background image"); return;

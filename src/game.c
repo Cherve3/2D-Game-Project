@@ -65,7 +65,7 @@ int main(int argc, char * argv[])
 	vec.z = 0;
 
 	// Level
-	level_load("outside.png");
+	level_load("shop.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
 	
 	// Entity spawns

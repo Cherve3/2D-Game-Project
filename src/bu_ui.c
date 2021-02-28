@@ -12,6 +12,7 @@ void hud_free()
 	memset(ui->hud.base, 0, sizeof(Sprite));
 	memset(ui->hud.health, 0, sizeof(Sprite));
 	memset(ui->hud.stamina, 0, sizeof(Sprite));
+	slog("freeing hud");
 }
 
 void start_menu_free()
