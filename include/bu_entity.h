@@ -2,12 +2,16 @@
 #define __ENTITY_H__
 
 #include "gfc_types.h"
+
 #include "gf2d_sprite.h"
+
+#include "bu_shapes.h"
 
 typedef struct Entity_s
 {
 	Bool		_inuse;
 	Vector2D	position;
+	Rect        rect_collider;
 	Sprite	   *sprite;
 	float		frame;
 	float		frameCount;

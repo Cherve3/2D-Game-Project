@@ -58,4 +58,6 @@ void player_update(Entity *self);
  */
 void player_free(Player *player);
 
+Player *get_player();
+
 #endif

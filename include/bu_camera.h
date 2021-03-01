@@ -70,4 +70,6 @@ Vector2D camera_get_position();
 */
 Vector2D camera_get_offset();
 
+Rect camera_get_player_bounds();
+
 #endif

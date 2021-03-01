@@ -21,21 +21,25 @@ void player_update(Entity *self)
 	{
 		//slog("Moving left?");
 		vector2d_add(self->position, self->position, vector2d(1, 0));
+		self->rect_collider.x += 1;
 	}
 	if (keys[SDL_SCANCODE_A])
 	{
 		//slog("Moving right?");
 		vector2d_add(self->position, self->position, vector2d(-1, 0));
+		self->rect_collider.x -= 1;
 	}
 	if (keys[SDL_SCANCODE_W])
 	{
 		//slog("Moving up?");
 		vector2d_add(self->position, self->position, vector2d(0, -1));
+		self->rect_collider.y -= 1;
 	}
 	if (keys[SDL_SCANCODE_S])
 	{
 		//slog("Moving down?");
 		vector2d_add(self->position, self->position, vector2d(0, 1));
+		self->rect_collider.y += 1;
 	}
 	
 }
@@ -108,6 +112,11 @@ void print_player_stats()
 	slog("    Throwing Max: %i", player[0].stats.throwing_max);
 }
 
+Player *get_player()
+{
+	return player;
+}
+
 Player *player_spawn(Vector2D position)
 {
 	if (!player)
@@ -126,6 +135,10 @@ Player *player_spawn(Vector2D position)
 		vector2d_copy(player->ent->position, position);
 		player->ent->frameRate = 0.1;
 		player->ent->frameCount = 16;
+		player->ent->rect_collider.x = position.x;
+		player->ent->rect_collider.y = position.y;
+		player->ent->rect_collider.w = 4;
+		player->ent->rect_collider.h = 4;
 		player->ent->update = player_update;
 		player->player_number += player_count;
 		generate_player_stats(&player->stats);

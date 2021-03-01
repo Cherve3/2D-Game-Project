@@ -90,15 +90,19 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
 		
-		if (keys[SDL_SCANCODE_UP])
-			camera_move(vector2d(0, -1));
-		if (keys[SDL_SCANCODE_DOWN])
-			camera_move(vector2d(0, 1));
-		if (keys[SDL_SCANCODE_LEFT])
-			camera_move(vector2d(-1, 0));
-		if (keys[SDL_SCANCODE_RIGHT])
-			camera_move(vector2d(1, 0));
-
+		// Player Collision with camera player bounds
+		if (!player_bounds_collision(get_player()->ent->rect_collider, camera_get_player_bounds()))
+		{
+			slog("player collision with player bound");
+			if ( (get_player()->ent->rect_collider.x + get_player()->ent->rect_collider.w) < camera_get_player_bounds().x)
+				camera_move(vector2d(-1, 0));
+			if (get_player()->ent->rect_collider.x > (camera_get_player_bounds().x + camera_get_player_bounds().w))
+				camera_move(vector2d(1, 0));
+			if ((get_player()->ent->rect_collider.y + get_player()->ent->rect_collider.h) < camera_get_player_bounds().y) 
+				camera_move(vector2d(0, -1));
+			if (get_player()->ent->rect_collider.y > (camera_get_player_bounds().y + camera_get_player_bounds().h))
+				camera_move(vector2d(0, 1));
+		}
 
 		level_draw();
 		gf2d_draw_rect(rect, vec);

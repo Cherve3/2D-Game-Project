@@ -2,6 +2,7 @@
 #include "simple_logger.h"
 
 #include "bu_camera.h"
+#include "bu_collision.h"
 #include "bu_player.h"
 
 static Camera camera = { 0 };
@@ -23,12 +24,14 @@ Vector2D camera_get_dimensions()
 	return size;
 }
 
-Vector2D camera_get_player_bounds()
+Rect camera_get_player_bounds()
 {
-	Vector2D size;
-	size.x = camera.playerBounds.w;
-	size.y = camera.playerBounds.h;
-	return size;
+	Rect rect;
+	rect.x = camera.playerBounds.x;
+	rect.y = camera.playerBounds.y;
+	rect.h = camera.playerBounds.h;
+	rect.w = camera.playerBounds.w;
+	return rect;
 }
 
 void camera_set_bounds(Vector2D bounds)
