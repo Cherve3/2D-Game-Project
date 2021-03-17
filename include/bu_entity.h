@@ -10,7 +10,9 @@
 typedef struct Entity_s
 {
 	Bool		_inuse;
+	TextWord   *name;
 	Vector2D	position;
+	float       velocity;
 	Rect        rect_collider;
 	Sprite	   *sprite;
 	float		frame;
@@ -18,6 +20,7 @@ typedef struct Entity_s
 	float		frameRate;
 	void	  (*update)(struct Entity_s *self);
 	void	  (*think)(struct Entity_s *self);
+	void	  (*onTouch)(struct Entity_s *self, struct Entity_s *other);
 	void	  (*draw)(struct Entity_s *self);
 	void	  (*free)(struct Entity_s *self);
 	void	   *data;
@@ -28,6 +31,11 @@ typedef struct Entity_s
  * @param max_entities 
  */
 void entity_manager_init(Uint32 max_entities);
+
+/**
+* @brief All entities think
+*/
+void entity_manager_think_entities();
 
 /**
  * @brief Update all entites
@@ -62,5 +70,12 @@ void entity_draw(Entity *ent);
  */
 void entity_draw_all();
 
+void entity_touch(Entity *self, Entity *other);
+
+void entity_collision_check(Entity *self);
+
+Entity *get_entities_list();
+
+Uint32 get_max_entities();
 
 #endif

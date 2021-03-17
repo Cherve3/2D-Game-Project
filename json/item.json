@@ -1,0 +1,14 @@
+{
+    "bat":{
+        "name":"Bat",
+        "damage":10
+    },
+    "chain":{
+        "name":"Chain",
+        "damage":10
+    },
+    "wooden stick":{
+        "name":"Wooden Stick",
+        "damage":10
+    }
+}

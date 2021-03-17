@@ -1,5 +1,6 @@
 #include "simple_logger.h"
 
+#include "bu_collision.h"
 #include "bu_camera.h"
 #include "bu_entity.h"
 
@@ -42,6 +43,27 @@ void entity_manager_free()
 	}
 	memset(&entity_manager, 0, sizeof(EntityManager));
 	slog("entity system closed");
+}
+
+void entity_think(Entity *self)
+{
+	if (!self)return;
+	if (self->think)self->think(self);
+}
+
+void entity_manager_think_entities()
+{
+	int i;
+	if (entity_manager.entity_list == NULL)
+	{
+		slog("entity system does not exist");
+		return;
+	}
+	for (i = 0; i < entity_manager.max_entities; i++)
+	{
+		if (entity_manager.entity_list[i]._inuse == 0)continue;
+		entity_think(&entity_manager.entity_list[i]);
+	}
 }
 
 void entity_update(Entity *self)
@@ -150,4 +172,35 @@ void entity_draw_all()
 	}
 }
 
+void entity_touch(Entity *self, Entity *other)
+{
+	if (!self)return;
+	if (!self->onTouch)return; // No touch function
+	self->onTouch(self, other);
+}
+
+void entity_collision_check(Entity *self)
+{
+	int i;
+	for (i = 0; i < entity_manager.max_entities; i++)
+	{
+		if (!entity_manager.entity_list[i]._inuse) continue;
+		if (&entity_manager.entity_list[i] == self) continue;
+		if (entity_collision(self->rect_collider, entity_manager.entity_list[i].rect_collider))
+		{
+			slog("Entity: %s collided with Entity: %s", self->name, entity_manager.entity_list[i].name);
+			entity_touch(self, &entity_manager.entity_list[i]);
+		}
+	}
+}
+
+Entity *get_entities_list()
+{
+	return entity_manager.entity_list;
+}
+
+Uint32 get_max_entities()
+{
+	return entity_manager.max_entities;
+}
 /*eol@eof*/

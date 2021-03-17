@@ -1,6 +1,6 @@
-#include <SDL.h>
-
 #include <math.h>
+
+#include <SDL.h>
 
 #include "simple_logger.h"
 
@@ -45,9 +45,12 @@ int main(int argc, char * argv[])
         vector4d(0,0,0,255),
         0);
     gf2d_graphics_set_frame_delay(16);
+
     gf2d_sprite_init(1024);
 	entity_manager_init(100);
 	ui_init();
+	level_init();
+
     SDL_ShowCursor(SDL_DISABLE);
 
 	// Camera
@@ -55,23 +58,26 @@ int main(int argc, char * argv[])
 	camera_set_position( vector2d(0, 0) );
 	camera_set_bounds(vector2d(1920, 1080));
 
+
+	// Rectangle representation of player camera bounds
 	rect.x = resolution.x / 6;
 	rect.y = resolution.y / 6;
 	rect.w = resolution.x / 1.5;
 	rect.h = resolution.y / 1.5;
+	
 	vec.w = 255;
 	vec.x = 0;
 	vec.y = 0;
 	vec.z = 0;
 
-	// Level
-	level_load("shop.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
 	
+	// Level
+	level_load("locker_room");
+
 	// Entity spawns
-	player_spawn(vector2d((resolution.x)-600, (resolution.y)-250));
-	npc_spawn(0, 0, vector2d(200, (786 * 0.5) - 200));
-	npc_spawn(1, 0, vector2d(100, (786 * 0.5) - 200));
+	//npc_spawn(0, 0, vector2d(200, (786 * 0.5) - 200));
+	//npc_spawn(1, 0, vector2d(100, (786 * 0.5) - 200));
 
 	slog_sync();
     /*main game loop*/
@@ -84,30 +90,28 @@ int main(int argc, char * argv[])
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
 
+		entity_manager_think_entities();
 		entity_manager_update_entities();
 
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
-		
-		// Player Collision with camera player bounds
-		if (!player_bounds_collision(get_player()->ent->rect_collider, camera_get_player_bounds()))
-		{
-			slog("player collision with player bound");
-			if ( (get_player()->ent->rect_collider.x + get_player()->ent->rect_collider.w) < camera_get_player_bounds().x)
-				camera_move(vector2d(-1, 0));
-			if (get_player()->ent->rect_collider.x > (camera_get_player_bounds().x + camera_get_player_bounds().w))
-				camera_move(vector2d(1, 0));
-			if ((get_player()->ent->rect_collider.y + get_player()->ent->rect_collider.h) < camera_get_player_bounds().y) 
-				camera_move(vector2d(0, -1));
-			if (get_player()->ent->rect_collider.y > (camera_get_player_bounds().y + camera_get_player_bounds().h))
-				camera_move(vector2d(0, 1));
-		}
 
 		level_draw();
+
+		// Player bounds rect
 		gf2d_draw_rect(rect, vec);
+		
+		// player collision rect
+		gf2d_draw_rect(gfc_sdl_rect(
+			get_player_collider().x, 
+			get_player_collider().y, 
+			get_player_collider().w, 
+			get_player_collider().h),
+			vec);
 
 		entity_draw_all();
+
 		ui_draw(resolution);
 
 
@@ -127,6 +131,10 @@ int main(int argc, char * argv[])
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
+
+	level_free();
+	npc_free();
+	player_free();
     slog("---==== END ====---");
     return 0;
 }

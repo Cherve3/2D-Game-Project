@@ -35,8 +35,17 @@ typedef struct{
 
 typedef struct
 {
+	Bool IDLE;
+	Bool WALK;
+	Bool RUN;
+	Bool ATTACK;
+}PlayerState;
+
+typedef struct
+{
 	Entity *ent;
 	PlayerStats stats;
+	PlayerState state;
 	Uint8	player_number;
 }Player;
 
@@ -54,9 +63,10 @@ void player_update(Entity *self);
 
 /**
  * @brief Free the player from memory.
- * @param *player A pointer to the player struct.
  */
-void player_free(Player *player);
+void player_free();
+
+Rect get_player_collider();
 
 Player *get_player();
 

@@ -22,6 +22,7 @@ void start_menu_free()
 	memset(ui->start_menu.background, 0, sizeof(Sprite));
 	memset(ui->start_menu.quit_button, 0, sizeof(Sprite));
 	memset(ui->start_menu.start_button, 0, sizeof(Sprite));
+	slog("Freeing menu");
 }
 
 void ui_init()
@@ -29,9 +30,9 @@ void ui_init()
 	if (!ui)
 		ui = (UI*)gfc_allocate_array(sizeof(UI), 1);
 	
-	ui->hud.base = gf2d_sprite_load_image("images/base_bars.png");
-	ui->hud.health = gf2d_sprite_load_image("images/health_bar.png");
-	ui->hud.stamina = gf2d_sprite_load_image("images/stamina_bar.png");
+	ui->hud.base = gf2d_sprite_load_image("images/ui/base_bars.png");
+	ui->hud.health = gf2d_sprite_load_image("images/ui/health_bar.png");
+	ui->hud.stamina = gf2d_sprite_load_image("images/ui/stamina_bar.png");
 	
 	if (!ui->hud.base) slog("ui base is NULL"); return;
 	if (!ui->hud.health) slog("ui health is NULL"); return;

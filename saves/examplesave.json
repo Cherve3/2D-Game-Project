@@ -1,0 +1,29 @@
+{
+    "player_info":
+    {
+        "name":"Aname",
+        "level":1,
+        "money":10,
+        "life":10,
+        "stamina":10,
+        "stamina_regen":1,
+        "strength":1,
+        "agility":1,
+        "willpower":1,
+        "punch":1,
+        "kick":1,
+        "weapon":1,
+        "throwing":1,
+
+        "items":[]
+        
+    },
+    "level_info":{
+        "name":"",
+        "position":[0,0,0],
+        "entities":[]
+    },
+    "progress":{
+        
+    }
+}

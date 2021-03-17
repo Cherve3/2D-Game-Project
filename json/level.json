@@ -1,25 +1,57 @@
 {
-    "levels":{
-        "locker_room":
-        {
-            "background": "images/backgrounds/locker_room.png"
-        },
-        "main_entrance":
-        {
-            "background": "images/backgrounds/main_entrance.png"
-        },
-        "front_lawn":
-        {
-            "background": "images/backgrounds/front_lawn.png"
-        },
-        "downtown":
-        {
-            "background": "images/backgrounds/downtown.png"
-        },
-        "shop":
-        {
-            "background": "images/backgrounds/shop.png"
-        }
+    "locker_room":
+    {
+        "background": "images/backgrounds/locker_room.png",
+        "width":1920.00,
+        "height":1080.00,
+        "spawn_list":[
+            {"name":"player_start", "position":[300.00,200.00]},
+            {"name":"jock_1",       "position":[900.00,300.00],  "type":2, "style":0},
+            {"name":"jock_2",       "position":[1000.00,800.00], "type":2, "style":0},
+            {"name":"jock_3",       "position":[500.00,800.00],  "type":2, "style":0},
+            {"name":"locker_exit",  "position":[1900.00,300.00]}
+        ]
+    },
+    "main_entrance":
+    {
+        "background": "images/backgrounds/main_entrance.png",
+        "width":1920.00,
+        "height":1080.00,
+        "spawn_list":[
+            {"name":"player_start", "position_1":[300.00,300.00], "position_2":[1900.00,300.00]},
+            {"name":"prep_1",       "position":[1000.00,300.00], "type":3, "style":0},
+            {"name":"prep_2",       "position":[1000.00,800.00], "type":3, "style":0},
+            {"name":"prep_3",       "position":[1000.00,800.00], "type":3, "style":0},
+            {"name":"hall_exit",    "position":[100.00,100.00]},
+            {"name":"school_exit",  "position":[1900.00,800.00]}
+        ]
+    },
+    "front_lawn":
+    {
+        "background": "images/backgrounds/front_lawn.png",
+        "width":1920.00,
+        "height":1080.00,
+        "spawn_list":[
+            {"name":"player_start_school", "position":[100.00,300.00]},
+            {"name":"player_start_shop",   "position":[1600.00,800.00]},
+            {"name":"goth1_start",         "position":[1000.00,300.00],"type":3, "style":1},
+            {"name":"goth2_start",         "position":[1200.00,600.00],"type":3, "style":1},
+            {"name":"goth3_start",         "position":[1500.00,800.00],"type":3, "style":1}
+        ]
+    },
+    "downtown":
+    {
+        "background": "images/backgrounds/downtown.png"
+    },
+    "shop":
+    {
+        "background": "images/backgrounds/shop.png",
+        "width":950.00,
+        "height":720.00,
+        "spawn_list":[
+            {"name":"player", "position":[475.00,700.00]},
+            {"name":"shop",   "position":[475.00,100.00],"type":6, "style":2},
+            {"name":"exit",   "position":[475.00,720.00], "args":{ "level":"front_lawn.png"}}
+        ]
     }
-
 }

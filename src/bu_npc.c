@@ -9,17 +9,51 @@
 #include "bu_npc.h"
 
 static NPC *npc = NULL;
-static Uint8 npc_count = 0;
+static Uint32 npc_count = 0;
 static SJson *npc_info = NULL;
+static SJson *name_list = NULL;
 
 void print_npc_stats();
 void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style);
 
 void npc_load_json()
 {
-	npc_info = sj_load("json/npc.json");
+	if (npc_info){
+		slog("NPC info already loaded.");
+		if (name_list)
+		{
+			slog("NPC names already loaded.");
+			return;
+		}else
+			name_list = sj_load("json/names.json");
+	}else
+		npc_info = sj_load("json/npc.json");
+	
 	if (!npc_info)
 		slog("npc info null");
+	
+	if (!name_list)
+		slog("name list null");
+
+}
+
+void npc_free()
+{
+	int i;
+	if (!npc) return;
+	for (i = 0; i < npc_count; i++){
+		entity_free(npc[i].ent);
+		npc[i].fightStyle = 0;
+		npc[i].isHostile = 0;
+		npc[i].type = 0;
+		memset(&npc[i].stats, 0, sizeof(NPCStats));
+	}
+	
+	memset(npc, 0, sizeof(NPC)*npc_count);
+	npc_count = 0;
+	sj_free(npc_info);
+	sj_free(name_list);
+	slog("NPCs freed");
 }
 
 void npc_update(Entity *self)
@@ -30,25 +64,36 @@ void npc_update(Entity *self)
 
 void npc_spawn(NPCType type, FightStyle style, Vector2D position)
 {	
+	SJson *names = NULL;
+	int random = 0;
+
 	if (!npc)
 		npc = (NPC*)gfc_allocate_array(sizeof(NPC), 10);
 
+	if (!name_list)
+		npc_load_json();
+
+	names = sj_object_get_value(name_list, "names");
+
+	random = (int)(gfc_random(150) * 100);
+	slog("Random = %i", random);
 
 	npc[npc_count].ent = entity_new();
 	if (!npc[npc_count].ent)
 	{
 		slog("failed to create npc entity");
-		slog_sync();
 		return NULL;
 	}
 
+	npc[npc_count].ent->name = sj_get_string_value(sj_array_get_nth(names, random));
 	npc[npc_count].ent->sprite = gf2d_sprite_load_all("images/ed210_top.png", 128, 128, 16);
 	npc[npc_count].ent->frameRate = 0.1;
 	npc[npc_count].ent->frameCount = 16;
 	npc[npc_count].ent->update = npc_update;
 
 	vector2d_copy(npc->ent->position, position);
-	
+	slog("NPC location: %f, %f", npc->ent->position.x, npc->ent->position.y);
+
 	npc[npc_count].fightStyle = style;
 	npc[npc_count].type = type;
 	generate_npc_stats(&npc[npc_count].stats, type, style);
@@ -63,6 +108,7 @@ void npc_spawn(NPCType type, FightStyle style, Vector2D position)
 void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style)
 {
 	SJson *npc_stats = NULL;
+	
 
 	if (!npc_info)
 		npc_load_json();
@@ -104,7 +150,7 @@ void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style)
 	}			
 
 	sj_get_integer_value(sj_object_get_value(npc_stats, "level"),			&stats->level);
-//	sj_get_integer_value(sj_object_get_value(npc_stats, "money"),			&stats->money);
+	sj_get_integer_value(sj_object_get_value(npc_stats, "money"),			&stats->money);
 	sj_get_integer_value(sj_object_get_value(npc_stats, "life"),			&stats->life);
 	sj_get_integer_value(sj_object_get_value(npc_stats, "stamina"),			&stats->stamina);
 	sj_get_integer_value(sj_object_get_value(npc_stats, "stamina_max"),		&stats->stamina_max);
@@ -160,4 +206,10 @@ void print_npc_stats()
 	slog("            Kick: %i", npc[0].stats.weapon);
 	slog("        Throwing: %i", npc[0].stats.throwing);
 }
+
+NPC *get_npc()
+{
+	return npc;
+}
+
 /*eol@eof*/
