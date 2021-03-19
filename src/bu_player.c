@@ -102,6 +102,10 @@ void player_controls(Entity *self)
 			player->state.WALK = true;
 		}
 	}
+	if (keys[SDL_SCANCODE_Q])
+	{
+		slog("drop or pick up item");
+	}
 
 	// Update states
 	if (!keys[SDL_SCANCODE_S] && !keys[SDL_SCANCODE_A] && !keys[SDL_SCANCODE_D] && !keys[SDL_SCANCODE_W])
