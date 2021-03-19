@@ -18,23 +18,21 @@ void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style);
 
 void npc_load_json()
 {
-	if (npc_info){
+	if (npc_info)
 		slog("NPC info already loaded.");
-		if (name_list)
-		{
-			slog("NPC names already loaded.");
-			return;
-		}else
-			name_list = sj_load("json/names.json");
-	}else
+	else
 		npc_info = sj_load("json/npc.json");
-	
+
+	if (name_list)
+		slog("NPC names already loaded.");
+	else
+		name_list = sj_load("json/names.json");
+
 	if (!npc_info)
 		slog("npc info null");
 	
 	if (!name_list)
 		slog("name list null");
-
 }
 
 void npc_free()
@@ -60,12 +58,12 @@ void npc_update(Entity *self)
 {
 	//self->position.x += 2 * cos(30 * GFC_DEGTORAD) *.06;
 	//self->position.y -= 2 * sin(30 * GFC_DEGTORAD) *.05;
+	entity_collision_check(self);
 }
 
 void npc_spawn(NPCType type, FightStyle style, Vector2D position)
 {	
-	SJson *names = NULL;
-	int random = 0;
+	TextWord *ent_name;
 
 	if (!npc)
 		npc = (NPC*)gfc_allocate_array(sizeof(NPC), 10);
@@ -73,25 +71,25 @@ void npc_spawn(NPCType type, FightStyle style, Vector2D position)
 	if (!name_list)
 		npc_load_json();
 
-	names = sj_object_get_value(name_list, "names");
-
-	random = (int)(gfc_random(150) * 100);
-	slog("Random = %i", random);
-
 	npc[npc_count].ent = entity_new();
 	if (!npc[npc_count].ent)
 	{
 		slog("failed to create npc entity");
 		return NULL;
 	}
-
-	npc[npc_count].ent->name = sj_get_string_value(sj_array_get_nth(names, random));
+	sprintf(ent_name, "NPC_%i", npc_count);
+	npc[npc_count].ent->name = ent_name;
 	npc[npc_count].ent->sprite = gf2d_sprite_load_all("images/ed210_top.png", 128, 128, 16);
 	npc[npc_count].ent->frameRate = 0.1;
 	npc[npc_count].ent->frameCount = 16;
 	npc[npc_count].ent->update = npc_update;
+	npc[npc_count].ent->_inuse = 1;
 
 	vector2d_copy(npc->ent->position, position);
+	npc[npc_count].ent->rect_collider.x = npc->ent->position.x;
+	npc[npc_count].ent->rect_collider.y = npc->ent->position.y;
+	npc[npc_count].ent->rect_collider.w = 100;
+	npc[npc_count].ent->rect_collider.h = 100;
 	slog("NPC location: %f, %f", npc->ent->position.x, npc->ent->position.y);
 
 	npc[npc_count].fightStyle = style;
@@ -108,7 +106,9 @@ void npc_spawn(NPCType type, FightStyle style, Vector2D position)
 void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style)
 {
 	SJson *npc_stats = NULL;
-	
+	SJson *names = NULL;
+
+	int random = 0;
 
 	if (!npc_info)
 		npc_load_json();
@@ -129,7 +129,7 @@ void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style)
 			break;
 		case Preps:
 			npc_stats = sj_object_get_value(npc_info, "preps");
-			slog("Spawning preps");
+			slog("Spawning prep");
 			break;
 		case Goths:
 			npc_stats = sj_object_get_value(npc_info, "goth");
@@ -149,6 +149,12 @@ void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style)
 			break;
 	}			
 
+
+	names = sj_object_get_value(name_list, "names");
+
+	random = (int)(gfc_random(150) * 100);
+
+	stats->name = sj_get_string_value(sj_array_get_nth(names, random));
 	sj_get_integer_value(sj_object_get_value(npc_stats, "level"),			&stats->level);
 	sj_get_integer_value(sj_object_get_value(npc_stats, "money"),			&stats->money);
 	sj_get_integer_value(sj_object_get_value(npc_stats, "life"),			&stats->life);
@@ -210,6 +216,18 @@ void print_npc_stats()
 NPC *get_npc()
 {
 	return npc;
+}
+
+void print_npc()
+{
+	int i;
+	for (i = 0; i < npc_count; i++)
+	{
+		slog("NPC: %s", npc[i].stats.name);
+		slog("    Location:  %f, %f", npc[i].ent->position.x, npc[i].ent->position.y);
+		slog("    Dimension: %f, %f", npc[i].ent->rect_collider.w, npc[i].ent->rect_collider.h);
+		slog("    Inuse: %i\n", npc[i].ent->_inuse);
+	}
 }
 
 /*eol@eof*/

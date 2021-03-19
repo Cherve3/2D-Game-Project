@@ -2,13 +2,17 @@
 #include "simple_json.h"
 #include "simple_logger.h"
 
+#include "bu_timer.h"
 #include "bu_camera.h"
 #include "bu_player.h"
+#include "bu_npc.h"
 #include "bu_level.h"
 
 static Player *player = { 0 };
 static Uint8 player_count = 0;
 static SJson *player_info = NULL;
+
+static Uint32 player_time = 0;
 
 void print_player_stats();
 
@@ -41,12 +45,15 @@ void check_player_bounds(Entity *self)
 		camera_move(vector2d(0, 2 + self->velocity));
 }
 
-void player_think(Entity* self)
+void player_collision(Entity *self)
+{
+	//if (entity_collision(self))
+}
+void player_controls(Entity *self)
 {
 	Uint8 *keys = SDL_GetKeyboardState(NULL);
 
-	if (!self)return;
-
+	// Controls
 	if (keys[SDL_SCANCODE_D])
 	{
 		player->state.IDLE = false;
@@ -58,7 +65,6 @@ void player_think(Entity* self)
 			vector2d_add(self->position, self->position, vector2d(2, 0));
 			player->state.WALK = true;
 		}
-			
 	}
 	if (keys[SDL_SCANCODE_A])
 	{
@@ -97,10 +103,13 @@ void player_think(Entity* self)
 		}
 	}
 
+	// Update states
 	if (!keys[SDL_SCANCODE_S] && !keys[SDL_SCANCODE_A] && !keys[SDL_SCANCODE_D] && !keys[SDL_SCANCODE_W])
+	{
 		player->state.IDLE = true;
-
-	if (keys[SDL_SCANCODE_LSHIFT])
+		player->state.WALK = false;
+	}
+	if (keys[SDL_SCANCODE_LSHIFT] && (keys[SDL_SCANCODE_A] || keys[SDL_SCANCODE_W] || keys[SDL_SCANCODE_S] || keys[SDL_SCANCODE_D]))
 	{
 		//slog("Running?");
 		player->state.WALK = false;
@@ -114,34 +123,77 @@ void player_think(Entity* self)
 	}
 }
 
+void player_think(Entity* self)
+{
+	if (!self)return;
+	player_controls(self);
+
+	check_player_bounds(self);
+	entity_collision_check(self);
+}
+
 void player_update(Entity *self)
 {
+	// Player Position
 	if (self->position.x < 0)
-	{
 		self->position.x = 0;
-	}
 	if (self->position.y < 0)
-	{
 		self->position.y = 0;
-	}
 
-	//slog("xp: %f, yp: %f", self->position.x, self->position.y);
-	//slog("xr: %f, yr: %f", self->rect_collider.x, self->rect_collider.y);
-
+	// Player Collider position
 	if (self->position.x > get_level_dimension().x - self->rect_collider.w)
-	{
 		self->position.x = get_level_dimension().x - self->rect_collider.w;
-
-	}
 	if (self->position.y > get_level_dimension().y - self->rect_collider.h)
-	{
 		self->position.y = get_level_dimension().y - self->rect_collider.h;
-	}
-
 	self->rect_collider.x = self->position.x;
 	self->rect_collider.y = self->position.y;
-	check_player_bounds(self);
 
+	// Health
+	if (player->stats.life < 0)
+		player->stats.life = 0;
+	if (player->stats.life > player->stats.life_max)
+		player->stats.life = player->stats.life_max;
+
+	slog("current time: %i", get_current_time());
+	slog("Player time: %i", player_time);
+
+	// Sprint
+	if (player->state.RUN && ((get_current_time() - player_time) > 1000))
+	{
+		player->stats.stamina -= 5;
+		player_time = get_current_time();
+	}
+	else if (!player->state.RUN && ((get_current_time() - player_time) > 2000))
+	{
+		player->stats.stamina += 5;
+		player_time = get_current_time();
+	}
+	// Stamina
+	if (player->stats.stamina < 0)
+		player->stats.stamina = 0;
+	if (player->stats.stamina > player->stats.stamina_max)
+		player->stats.stamina = player->stats.stamina_max;
+	if (player->stats.stamina == 0)
+		player->state.RUN = false;
+
+	//slog("--------------------------------------");
+	//slog("RUN: %i", player->state.RUN);
+	//slog("WALK: %i", player->state.WALK);
+	//slog("IDLE: %i", player->state.IDLE);
+	//slog(": %i", player->state.ATTACK);
+}
+
+void player_touch(Entity *self, Entity *other)
+{
+	NPC *npc;
+	if (!self)return;
+	if (strstr(other->name, "NPC") != NULL)
+	{
+		player->stats.life -= 1;
+		if (self->position.x + self->rect_collider.x > other->position.x)
+			self->position.x -= 20;
+	}
+	
 }
 
 void player_load_json()
@@ -248,10 +300,12 @@ Player *player_spawn(Vector2D position)
 		player->ent->rect_collider.w = 100;
 		player->ent->rect_collider.h = 100;
 		player->ent->update = player_update;
+		player->ent->onTouch = player_touch;
 		player->ent->think = player_think;
 		player->player_number = player_count;
 		generate_player_stats(&player->stats);
 		slog("Player %i spawning...", player->player_number);
+		player_time = SDL_GetTicks();
 	}
 	else
 		slog("Warning: There are already two players active"); return;

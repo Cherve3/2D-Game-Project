@@ -11,10 +11,11 @@
 void door_touch(Entity *self, Entity *player)
 {
 	if (!self) return;
-
-	slog("Level load");
-	level_load("main_entrance");
-	entity_free(self);
+	if (player == get_player()->ent)
+	{
+		level_load(self->data);
+		entity_free(self);
+	}
 }
 
 void door_think(Entity *self)
@@ -23,23 +24,27 @@ void door_think(Entity *self)
 	entity_collision_check(self);
 }
 
-Entity *door_spawn(Vector2D position, SJson *args)
+Entity *door_spawn(Vector2D position, Vector2D dimension, TextWord **args)
 {
 	Entity *door;
+	TextLine *name;
 	
 	door = entity_new();
 	if (!door) return NULL;
-	door->name = "door";
-	door->sprite = gf2d_sprite_load_all("images/ed210_top.png", 128, 128, 16);
+	slog("name: %s and location: %s", args[0], args[1]);
+	door->name = args[0];
+	door->sprite = gf2d_sprite_load_all("images/door.png", 128, 128, 16);
+	door->_inuse = 1;
 	door->position.x = position.x;
 	door->position.y = position.y;
 	door->rect_collider.x = position.x;
 	door->rect_collider.y = position.y;
-	door->rect_collider.h = 50;
-	door->rect_collider.w = 50;
+	door->rect_collider.w = dimension.x;
+	door->rect_collider.h = dimension.y;
 	door->onTouch = door_touch;
 	door->think = door_think;
-	slog("Door spawn at position: %f, %f", position.x, position.y);
+	door->data = args[1];
+	slog("Door spawn at position: %f, %f dimension: %f, %f and exits to %s", position.x, position.y, dimension.x, dimension.y, args);
 }
 
 /*eol@eof*/

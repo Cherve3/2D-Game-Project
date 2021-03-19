@@ -78,4 +78,6 @@ Entity *get_entities_list();
 
 Uint32 get_max_entities();
 
+void print_entities();
+
 #endif

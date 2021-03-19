@@ -2,6 +2,7 @@
 #define __BU_NPC_H__
 
 #include "bu_entity.h"
+#include "bu_items.h"
 
 typedef enum {
 	Friendly,
@@ -21,24 +22,24 @@ typedef enum {
 }FightStyle;
 
 typedef struct{
-	char* name;
+	TextWord *name;
 
-	Uint8 level;
-	Uint8 money;
+	int level;
+	int money;
 
-	Uint8 life;
-	Uint8 stamina;
-	Uint8 stamina_max;
-	Uint8 stamina_regen;
+	int life;
+	int stamina;
+	int stamina_max;
+	int stamina_regen;
 
-	Uint8 strength;
-	Uint8 agility;
-	Uint8 willpower;
+	int strength;
+	int agility;
+	int willpower;
 
-	Uint8 punch;
-	Uint8 kick;
-	Uint8 weapon;
-	Uint8 throwing;
+	int punch;
+	int kick;
+	int weapon;
+	int throwing;
 
 }NPCStats;
 
@@ -49,6 +50,7 @@ typedef struct
 	Entity *ent;
 	NPCStats stats;
 	Bool isHostile;
+	Item weapon;
 }NPC;
 
 /**
@@ -72,5 +74,7 @@ void npc_spawn(NPCType type, FightStyle style, Vector2D position);
 void npc_free();
 
 NPC *get_npc();
+
+void print_npc();
 
 #endif

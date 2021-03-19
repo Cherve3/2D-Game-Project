@@ -21,7 +21,8 @@ void level_free()
 	free(level->spawn_list);
 	gf2d_sprite_free(level->background);
 	gf2d_sprite_free(level->sprite);
-
+	
+	sj_free(spawn_list);
 	sj_free(level_json);
 	
 	memset(level, 0, sizeof(Level));
@@ -40,23 +41,34 @@ void level_init()
 	slog("Level initialized.");
 }
 
-void level_spawn_entities(SJson *spawnList)
+void clear_entities()
 {
-	int i = 0, count = 0;
-	SJson *item;
-	TextWord *name;
-	Vector2D position;
-	NPCType type;
-	FightStyle style;
-
-	count = sj_array_get_count(spawnList);
-	slog("count: %i", count);
+	int i;
 	for (i = 0; i < get_max_entities(); i++)
 	{
 		if (!get_entities_list()[i]._inuse) continue;
 		if (&get_entities_list()[i] == get_player()->ent) continue;
 		entity_free(&get_entities_list()[i]);
 	}
+}
+
+void level_spawn_entities(SJson *spawnList)
+{
+	int i = 0, count = 0;
+	SJson *item;
+	TextWord *name;
+	TextWord **args = NULL;
+	Vector2D position, dimension;
+	NPCType type;
+	FightStyle style;
+
+	args = gfc_allocate_array(sizeof(TextWord),2);
+
+	count = sj_array_get_count(spawnList);
+	slog("count: %i", count);
+
+	clear_entities();
+
 	item = NULL;
 	for (i = 0; i < count; i++)
 	{
@@ -65,8 +77,8 @@ void level_spawn_entities(SJson *spawnList)
 		if (!item)continue;
 		if (i == 0)
 		{
-			int str_value = sj_value_as_vector2d(sj_object_get_value(item, "position"), &position);
-			slog("player pos is %i", str_value);
+			sj_value_as_vector2d(sj_object_get_value(item, "position_1"), &position);
+
 			if (get_player()){
 				get_player()->ent->position.x = position.x;
 				get_player()->ent->position.y = position.y;
@@ -76,16 +88,16 @@ void level_spawn_entities(SJson *spawnList)
 		}
 		else
 		{
-			int pos_value = sj_value_as_vector2d(sj_object_get_value(item, "position"), &position);
-			slog("npc pos is %i", pos_value);
+			sj_value_as_vector2d(sj_object_get_value(item, "position"), &position);
 			name = sj_get_string_value(sj_object_get_value(item, "name"));
-			slog("NPC name: %s", name);
+			
 			if (strstr(name, "exit") != NULL)
 			{
-				slog("Door spawn");
-				slog("position: %f, %f", position.x, position.y);
-				door_spawn(position, NULL);
-				
+				sj_value_as_vector2d(sj_object_get_value(item, "dimension"), &dimension);
+				args[0] = sj_get_string_value(sj_object_get_value(item, "name"));
+				args[1] = sj_get_string_value(sj_object_get_value(item, "location"));
+			
+				door_spawn(position, dimension, args);
 			}
 			else
 			{
@@ -97,15 +109,14 @@ void level_spawn_entities(SJson *spawnList)
 							temp fix is setting the position like below*/
 				get_npc()[i - 1].ent->position.x = position.x;
 				get_npc()[i - 1].ent->position.y = position.y;
-				slog("NPC ent name: %s",get_npc()[i - 1].ent->name);
 			}
 		}
 	}
 
 
-	slog("NPC 0 location: %f, %f",get_npc()[0].ent->position.x, get_npc()[0].ent->position.y);
-	slog("NPC 1 location: %f, %f", get_npc()[1].ent->position.x, get_npc()[1].ent->position.y);
-	slog("NPC 2 location: %f, %f", get_npc()[2].ent->position.x, get_npc()[2].ent->position.y);
+	//slog("NPC 0 location: %f, %f",get_npc()[0].ent->position.x, get_npc()[0].ent->position.y);
+	//slog("NPC 1 location: %f, %f", get_npc()[1].ent->position.x, get_npc()[1].ent->position.y);
+	//slog("NPC 2 location: %f, %f", get_npc()[2].ent->position.x, get_npc()[2].ent->position.y);
 }
 
 void level_load(char *name)
@@ -114,7 +125,7 @@ void level_load(char *name)
 	SJson *item;
 	SJson *player_info;
 	Vector2D position;
-	
+
 	if (spawn_list)
 		spawn_list = NULL;
 	spawn_list = sj_object_get_value(level_info, "spawn_list");
@@ -136,11 +147,8 @@ void level_load(char *name)
 	sj_get_float_value(sj_object_get_value(level_info, "height"), &level->height);
 
 	level_spawn_entities(spawn_list);
-}
-
-void level_transition()
-{
-
+	//print_entities();
+	//print_npc();
 }
 
 void level_draw()
@@ -157,9 +165,6 @@ void level_draw()
 	drawPosition.x = level->position.x;
 	drawPosition.y = level->position.y;
 	gf2d_sprite_draw_image(level->background, vector2d(drawPosition.x + offset.x, drawPosition.y + offset.y));
-	
-	
-	//gf2d_sprite_draw(level->sprite, vector2d(0, 0), &scale, NULL, NULL, NULL, NULL, NULL);
 }
 
 Level *get_level()

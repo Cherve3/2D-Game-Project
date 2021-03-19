@@ -8,12 +8,14 @@
 #include "gf2d_sprite.h"
 #include "gf2d_draw.h"
 
+#include "bu_timer.h"
 #include "bu_camera.h"
 #include "bu_ui.h"
 #include "bu_entity.h"
 #include "bu_player.h"
 #include "bu_npc.h"
 #include "bu_level.h"
+#include "bu_items.h"
 
 int main(int argc, char * argv[])
 {
@@ -32,7 +34,11 @@ int main(int argc, char * argv[])
     float mf = 0;
     Sprite *mouse;
     Vector4D mouseColor = {255,100,255,200};
-    
+
+	// Initialize SDL
+	SDL_Init(SDL_INIT_EVERYTHING);
+	time_init();
+
     /*program initialization*/
     init_logger("gf2d.log");
     slog("---==== BEGIN ====---");
@@ -46,10 +52,12 @@ int main(int argc, char * argv[])
         0);
     gf2d_graphics_set_frame_delay(16);
 
-    gf2d_sprite_init(1024);
+    gf2d_sprite_init(512);
 	entity_manager_init(100);
+	item_manager_init(50);
 	ui_init();
 	level_init();
+	
 
     SDL_ShowCursor(SDL_DISABLE);
 
@@ -64,7 +72,7 @@ int main(int argc, char * argv[])
 	rect.y = resolution.y / 6;
 	rect.w = resolution.x / 1.5;
 	rect.h = resolution.y / 1.5;
-	
+	//color black
 	vec.w = 255;
 	vec.x = 0;
 	vec.y = 0;
@@ -75,12 +83,9 @@ int main(int argc, char * argv[])
 	// Level
 	level_load("locker_room");
 
-	// Entity spawns
-	//npc_spawn(0, 0, vector2d(200, (786 * 0.5) - 200));
-	//npc_spawn(1, 0, vector2d(100, (786 * 0.5) - 200));
-
 	slog_sync();
-    /*main game loop*/
+
+	/*main game loop*/
     while(!done)
     {
         SDL_PumpEvents();   // update SDL's internal event structures
@@ -100,20 +105,18 @@ int main(int argc, char * argv[])
 		level_draw();
 
 		// Player bounds rect
-		gf2d_draw_rect(rect, vec);
+		//gf2d_draw_rect(rect, vec);
 		
 		// player collision rect
-		gf2d_draw_rect(gfc_sdl_rect(
+		/*gf2d_draw_rect(gfc_sdl_rect(
 			get_player_collider().x, 
 			get_player_collider().y, 
 			get_player_collider().w, 
 			get_player_collider().h),
 			vec);
-
+*/
 		entity_draw_all();
-
 		ui_draw(resolution);
-
 
         //UI elements last
         gf2d_sprite_draw(

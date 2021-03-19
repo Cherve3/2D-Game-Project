@@ -2,34 +2,35 @@
 #define __BU_PLAYER_H__
 
 #include "bu_entity.h"
+#include "bu_items.h"
 
 typedef struct{
 	char* name;
 
-	Uint8 level;
-	Uint8 money;
+	int level;
+	int money;
 
-	Uint8 life;
-	Uint8 life_max;
-	Uint8 stamina;
-	Uint8 stamina_max;
-	Uint8 stamina_regen;
+	int life;
+	int life_max;
+	int stamina;
+	int stamina_max;
+	int stamina_regen;
 
-	Uint8 strength;
-	Uint8 strength_max;
-	Uint8 agility;
-	Uint8 agility_max;
-	Uint8 willpower;
-	Uint8 willpower_max;
+	int strength;
+	int strength_max;
+	int agility;
+	int agility_max;
+	int willpower;
+	int willpower_max;
 
-	Uint8 punch;
-	Uint8 punch_max;
-	Uint8 kick;
-	Uint8 kick_max;
-	Uint8 weapon;
-	Uint8 weapon_max;
-	Uint8 throwing;
-	Uint8 throwing_max;
+	int punch;
+	int punch_max;
+	int kick;
+	int kick_max;
+	int weapon;
+	int weapon_max;
+	int throwing;
+	int throwing_max;
 
 }PlayerStats;
 
@@ -43,10 +44,19 @@ typedef struct
 
 typedef struct
 {
+	Item head;
+	Item torso;
+	Item legs;
+	Item feet;
+}Equipment;
+
+typedef struct
+{
 	Entity *ent;
 	PlayerStats stats;
 	PlayerState state;
 	Uint8	player_number;
+	Equipment equip;
 }Player;
 
 /**

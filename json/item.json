@@ -1,14 +1,81 @@
 {
-    "bat":{
-        "name":"Bat",
-        "damage":10
+    "consumable":
+    {
+        "candy_bar":
+        {
+            "name":"Candy Bar",
+            "description":"A chocolate candy bar.",
+            "armor":0,
+            "damage":20,
+            "cost":5
+        },
+        "sandwich":
+        {
+            "name":"Sandwich",
+            "description":"A premade sandwich.",
+            "armor":0,
+            "damage":40,
+            "cost":10
+        }
     },
-    "chain":{
-        "name":"Chain",
-        "damage":10
+    "weapon":
+    {
+        "bat":
+        {
+            "name":"Bat",
+            "description":"A wooden bat.",
+            "armor":0,
+            "damage":20,
+            "cost":50
+        },
+        "chain":
+        {
+            "name":"Chain",
+            "description":"A medium length linked chain.",
+            "armor":0,
+            "damage":15,
+            "cost":100
+        },
+        "wooden stick":
+        {
+            "name":"Wooden Stick",
+            "description":"A wooden stick.",
+            "armor":0,
+            "damage":10,
+            "cost":25
+        }
     },
-    "wooden stick":{
-        "name":"Wooden Stick",
-        "damage":10
+    "equipment":
+    {
+        "helmet":
+        {
+            "name":"Baseball Helmet",
+            "description":"A standard baseball helmet.",
+            "armor":10,
+            "damage":0,
+            "cost":50
+        },
+        "shirt":
+        {
+            "name":"T-shirt",
+            "description":"A standard T-shirt.",
+            "armor":5,
+            "damage":0,
+            "cost":15
+        },
+        "pants":
+        {
+            "name":"Jeans",
+            "armor":5,
+            "damage":0,
+            "cost":20
+        },
+        "shoes":
+        {
+            "name":"Running Shoes",
+            "armor":10,
+            "damage":5,
+            "cost":25
+        }
     }
 }

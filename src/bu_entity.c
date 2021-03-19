@@ -168,6 +168,7 @@ void entity_draw_all()
 	for (i = 0; i < entity_manager.max_entities; i++)
 	{
 		if (!entity_manager.entity_list[i]._inuse) continue;
+		//slog("drawing %s", entity_manager.entity_list[i].name);
 		entity_draw(&entity_manager.entity_list[i]);
 	}
 }
@@ -202,5 +203,17 @@ Entity *get_entities_list()
 Uint32 get_max_entities()
 {
 	return entity_manager.max_entities;
+}
+
+void print_entities()
+{
+	int i;
+	for (i = 0; i < entity_manager.max_entities; i++)
+	{
+		slog("Entity: %s", entity_manager.entity_list[i].name);
+		slog("    Location:  %f, %f", entity_manager.entity_list[i].position.x, entity_manager.entity_list[i].position.y);
+		slog("    Dimension: %f, %f", entity_manager.entity_list[i].rect_collider.w, entity_manager.entity_list[i].rect_collider.h);
+		slog("    Inuse: %i\n", entity_manager.entity_list[i]._inuse, entity_manager.entity_list[i].position.y);
+	}
 }
 /*eol@eof*/
