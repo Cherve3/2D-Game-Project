@@ -1,9 +1,11 @@
 {
     "consumable":
     {
-        "candy_bar":
+        "candy":
         {
             "name":"Candy Bar",
+            "sprite":"images/items/candy.png",
+            "dimensions":[180,155],
             "description":"A chocolate candy bar.",
             "armor":0,
             "damage":20,
@@ -12,6 +14,8 @@
         "sandwich":
         {
             "name":"Sandwich",
+            "sprite":"images/items/sandwich.png",
+            "dimensions":[180,155],
             "description":"A premade sandwich.",
             "armor":0,
             "damage":40,
@@ -23,6 +27,8 @@
         "bat":
         {
             "name":"Bat",
+            "sprite":"images/items/bat.png",
+            "dimensions":[50,200],
             "description":"A wooden bat.",
             "armor":0,
             "damage":20,
@@ -31,14 +37,18 @@
         "chain":
         {
             "name":"Chain",
+            "sprite":"images/items/chain.png",
+            "dimensions":[100,70],
             "description":"A medium length linked chain.",
             "armor":0,
             "damage":15,
             "cost":100
         },
-        "wooden stick":
+        "stick":
         {
             "name":"Wooden Stick",
+            "sprite":"images/items/stick.png",
+            "dimensions":[50,200],
             "description":"A wooden stick.",
             "armor":0,
             "damage":10,
@@ -50,14 +60,18 @@
         "helmet":
         {
             "name":"Baseball Helmet",
+            "sprite":"images/items/helmet.png",
+            "dimensions":[180,155],
             "description":"A standard baseball helmet.",
             "armor":10,
             "damage":0,
             "cost":50
         },
-        "shirt":
+        "t_shirt":
         {
             "name":"T-shirt",
+            "sprite":"images/items/shirt.png",
+            "dimensions":[180,155],
             "description":"A standard T-shirt.",
             "armor":5,
             "damage":0,
@@ -66,13 +80,19 @@
         "pants":
         {
             "name":"Jeans",
+            "sprite":"images/items/jeans.png",
+            "dimensions":[180,155],
+            "description":"Standard blue jeans.",
             "armor":5,
             "damage":0,
             "cost":20
         },
-        "shoes":
+        "runners":
         {
             "name":"Running Shoes",
+            "sprite":"images/items/runners.png",
+            "dimensions":[180,155],
+            "description":"Shoes that are designed for ultimate speed.",
             "armor":10,
             "damage":5,
             "cost":25

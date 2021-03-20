@@ -11,23 +11,25 @@ typedef enum
 }ItemType;
 
 typedef struct{
+
+	Bool _inuse;
 	ItemType type;
 	char *name;
 	char *description;
 
 	Entity *ent;
 
-	Uint8 armor;
-	Uint8 damage;
+	int armor;
+	int damage;
 
-	Uint8 cost;
+	int cost;
 }Item;
 
 void item_drop();
 
 void item_free();
 
-void item_spawn();
+void item_new(TextWord *item_name, ItemType type, Vector2D position);
 
 void item_manager_init(Uint32 maxItems);
 
