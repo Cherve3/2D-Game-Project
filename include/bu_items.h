@@ -13,6 +13,7 @@ typedef enum
 typedef struct{
 
 	Bool _inuse;
+	Bool picked_up;
 	ItemType type;
 	char *name;
 	char *description;

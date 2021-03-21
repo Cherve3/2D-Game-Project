@@ -32,6 +32,11 @@ typedef struct{
 	int throwing;
 	int throwing_max;
 
+	Bool toggle_stats;
+	Bool toggle_inventory;
+	Bool pickup_item;
+	Bool can_carry;
+
 }PlayerStats;
 
 typedef struct

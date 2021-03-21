@@ -2,6 +2,8 @@
 #ifndef __BU_UI_H__
 #define __BU_UI_H__
 
+#include "SDL_ttf.h"
+
 #include "gf2d_sprite.h"
 
 typedef struct
@@ -13,16 +15,22 @@ typedef struct
 
 typedef struct
 {
-	Sprite *background;
-	Sprite *start_button;
-	Sprite *quit_button;
+	Sprite   *background;
+	Sprite   *start_button;
+	Sprite   *quit_button;
+	TTF_Font *start_font;
 }StartMenu;
 
 typedef struct
 {
-	HUD hud;
-	StartMenu start_menu;
-}UI;
+	Sprite     *stat_menu;
+	Sprite     *inventory_menu;
+	Sprite    **text_sprite;
+	TTF_Font   *player_font;
+	TextLine   **stat_text;
+	int			text_count;
+	SDL_Color   black;
+}PlayerMenu;
 
 void start_menu_init();
 
@@ -33,6 +41,8 @@ void ui_init();
 void hud_free();
 
 void start_menu_free();
+
+void ui_update();
 
 void ui_draw(Vector2D);
 

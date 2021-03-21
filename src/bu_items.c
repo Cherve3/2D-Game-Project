@@ -4,6 +4,7 @@
 #include "gf2d_config.h"
 
 #include "bu_items.h"
+#include "bu_player.h"
 #include "bu_entity.h"
 
 typedef struct
@@ -17,9 +18,16 @@ static ItemManager items = { 0 };
 
 static SJson *item_json = NULL;
 
-void item_free(Item self)
+void item_free(Item *self)
 {
-
+	if (!self)return;
+	self->_inuse = 0;
+	self->armor = 0;
+	self->cost = 0;
+	self->damage = 0;
+	self->description = NULL;
+	self->name = NULL;
+	self->type = 0;
 }
 
 void load_item_json()
@@ -44,10 +52,12 @@ void item_manager_close()
 		for (i = 0; i < items.item_count; i++)
 		{
 			entity_free(&items.item_list[i].ent);
+			item_free(&items.item_list[i]);
 		}
 		free(items.item_list);
 	}
-	memset(&items, 0, sizeof(ItemManager));
+	/*TODO: Does not close cleanly using this memeset*/
+	//memset(&items, 0, sizeof(ItemManager));
 	slog("Item System Closed");
 }
 
@@ -59,7 +69,7 @@ void item_manager_init(Uint32 maxItems)
 		return;
 	}
 
-	items.item_list = gfc_allocate_array(sizeof(Item), maxItems);
+	items.item_list = (Item*)gfc_allocate_array(sizeof(Item), maxItems);
 	if (!items.item_list)
 		slog("failed to allocate item list");
 
@@ -84,6 +94,50 @@ void print_item(Item *item)
 	slog("pos y:       %f", item->ent->rect_collider.y);
 	slog("width:       %f", item->ent->rect_collider.w);
 	slog("height:      %f", item->ent->rect_collider.h);
+}
+
+void item_touch(Entity *self, Entity *player)
+{
+	Item *item;
+	const Uint8 *keys;
+	keys = SDL_GetKeyboardState(NULL);
+	if (!self) return;
+	item = (Item*)self->data;
+	if (player == get_player()->ent)
+	{
+		if (keys[SDL_SCANCODE_Q] && get_player()->stats.can_carry)
+		{
+			get_player()->stats.can_carry = false;
+			item->picked_up = true;
+			slog("Item pick up");
+			
+		}
+		else if (keys[SDL_SCANCODE_Q] && !get_player()->stats.can_carry)
+		{
+			get_player()->stats.can_carry = true;
+			item->picked_up = false;
+			slog("Item dropped");
+		}
+	}
+}
+
+void item_think(Entity *self)
+{
+	if (!self) return;
+	entity_collision_check(self);
+}
+
+void item_update(Entity *self)
+{
+	Item *item;
+	if (!self) return;
+	item = (Item*)self->data;
+	if (item->picked_up){
+		item->ent->position.x = get_player()->ent->position.x + 50;
+		item->ent->position.y = get_player()->ent->position.y + 20;
+		item->ent->rect_collider.x = item->ent->position.x;
+		item->ent->rect_collider.y = item->ent->position.y;
+	}
 }
 
 void item_create(TextWord *item_name, ItemType type, Item *item)
@@ -129,7 +183,8 @@ void item_create(TextWord *item_name, ItemType type, Item *item)
 	if (!info)
 		slog("info is null");
 
-	item->_inuse = 1;
+	item->_inuse = true;
+	item->picked_up = false;
 	item->type = type;
 	item->name = sj_get_string_value(sj_object_get_value(info, "name"));
 	item->description = sj_get_string_value(sj_object_get_value(info, "description"));
@@ -168,9 +223,12 @@ void item_new(TextWord *item_name, ItemType type, Vector2D position)
 		items.item_list[i].ent->name = "Item_1";
 		items.item_list[i].ent->rect_collider.x = position.x;
 		items.item_list[i].ent->rect_collider.y = position.y;
-
+		items.item_list[i].ent->onTouch = item_touch;
+		items.item_list[i].ent->think = item_think;
+		items.item_list[i].ent->update = item_update;
 		item_create(item_name, type, &items.item_list[i]);
-		print_item(&items.item_list[i]);
+		items.item_list[i].ent->data = (void*)&items.item_list[i];
+		//print_item(&items.item_list[i]);
 		return;
 	}
 	slog("no free items available.");

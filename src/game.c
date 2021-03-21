@@ -55,7 +55,6 @@ int main(int argc, char * argv[])
     gf2d_sprite_init(512);
 	entity_manager_init(100);
 	item_manager_init(50);
-	ui_init();
 	level_init();
 	
 
@@ -82,6 +81,7 @@ int main(int argc, char * argv[])
 	
 	// Level
 	level_load("locker_room");
+	ui_init();
 	item_new("bat", weapon, vector2d(100, 100));
 	slog_sync();
 
@@ -103,7 +103,6 @@ int main(int argc, char * argv[])
             //backgrounds drawn first
 
 		level_draw();
-
 		// Player bounds rect
 		//gf2d_draw_rect(rect, vec);
 		
@@ -116,6 +115,7 @@ int main(int argc, char * argv[])
 			vec);
 */
 		entity_draw_all();
+		ui_update();
 		ui_draw(resolution);
 
         //UI elements last
@@ -139,6 +139,7 @@ int main(int argc, char * argv[])
 	npc_free();
 	player_free();
     slog("---==== END ====---");
+	slog_sync();
     return 0;
 }
 /*eol@eof*/

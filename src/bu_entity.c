@@ -189,7 +189,7 @@ void entity_collision_check(Entity *self)
 		if (&entity_manager.entity_list[i] == self) continue;
 		if (entity_collision(self->rect_collider, entity_manager.entity_list[i].rect_collider))
 		{
-			slog("Entity: %s collided with Entity: %s", self->name, entity_manager.entity_list[i].name);
+			//slog("Entity: %s collided with Entity: %s", self->name, entity_manager.entity_list[i].name);
 			entity_touch(self, &entity_manager.entity_list[i]);
 		}
 	}

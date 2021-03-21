@@ -45,10 +45,6 @@ void check_player_bounds(Entity *self)
 		camera_move(vector2d(0, 2 + self->velocity));
 }
 
-void player_collision(Entity *self)
-{
-	//if (entity_collision(self))
-}
 void player_controls(Entity *self)
 {
 	Uint8 *keys = SDL_GetKeyboardState(NULL);
@@ -106,6 +102,17 @@ void player_controls(Entity *self)
 	{
 		slog("drop or pick up item");
 	}
+	if (keys[SDL_SCANCODE_TAB])
+	{
+		if (player->stats.toggle_stats == false){
+			player->stats.toggle_stats = true;
+			slog("toggle stats = %i", player->stats.toggle_stats);
+		}
+		else{
+			player->stats.toggle_stats = false;
+			slog("toggle stats = %i", player->stats.toggle_stats);
+		}
+	}
 
 	// Update states
 	if (!keys[SDL_SCANCODE_S] && !keys[SDL_SCANCODE_A] && !keys[SDL_SCANCODE_D] && !keys[SDL_SCANCODE_W])
@@ -158,8 +165,8 @@ void player_update(Entity *self)
 	if (player->stats.life > player->stats.life_max)
 		player->stats.life = player->stats.life_max;
 
-	slog("current time: %i", get_current_time());
-	slog("Player time: %i", player_time);
+	//slog("current time: %i", get_current_time());
+	//slog("Player time: %i", player_time);
 
 	// Sprint
 	if (player->state.RUN && ((get_current_time() - player_time) > 1000))
@@ -308,6 +315,10 @@ Player *player_spawn(Vector2D position)
 		player->ent->think = player_think;
 		player->player_number = player_count;
 		generate_player_stats(&player->stats);
+		player->stats.toggle_stats = false;
+		player->stats.toggle_inventory = false;
+		player->stats.pickup_item = false;
+		player->stats.can_carry = true;
 		slog("Player %i spawning...", player->player_number);
 		player_time = SDL_GetTicks();
 	}

@@ -22,11 +22,13 @@ void level_free()
 	gf2d_sprite_free(level->background);
 	gf2d_sprite_free(level->sprite);
 	
-	sj_free(spawn_list);
-	sj_free(level_json);
+
+	/*TODO: Does not close cleanly freeing sjson files*/
+	//sj_free(spawn_list);
+	//sj_free(level_json);
 	
 	memset(level, 0, sizeof(Level));
-	slog("Level freed.");
+	slog("Level freed");
 }
 
 void level_init()
