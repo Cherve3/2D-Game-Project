@@ -194,17 +194,56 @@ void player_update(Entity *self)
 	//slog(": %i", player->state.ATTACK);
 }
 
+void resolve_collision(Entity *self, Entity *other)
+{
+	float self_left, self_right, self_top, self_bottom;
+	float other_left, other_right, other_top, other_bottom;
+
+	self_left = self->position.x;
+	self_top = self->position.y;
+	self_right = self->position.x + self->rect_collider.w;
+	self_bottom = self->position.y + self->rect_collider.h;
+	other_left = other->position.x;
+	other_top = other->position.y;
+	other_right = other->position.x + other->rect_collider.w;
+	other_bottom = other->position.y + other->rect_collider.h;
+
+	if (strstr(other->name, "NPC") != NULL)
+	{
+		player->stats.life -= 1;
+
+		if ((self->position.x + self->rect_collider.w >= other->position.x) &&
+			(self->position.x + self->rect_collider.w <= other->position.x + other->rect_collider.w))
+			self->position.x -= 20;
+
+		if ((self->position.y + self->rect_collider.h >= other->position.y) &&
+			(self->position.y + self->rect_collider.h >= other->position.y + other->rect_collider.h))
+			self->position.y -= 20;
+
+		if ((self->position.x >= other->position.x) &&
+			(self->position.x <= other->position.x + other->rect_collider.w))
+			self->position.x += 20;
+
+		if ((self->position.y >= other->position.y) &&
+			(self->position.y + self->rect_collider.h >= other->position.y + other->rect_collider.h))
+			self->position.y += 20;
+		/*
+		if ((self->position.x + self->rect_collider.w >= other->position.x) &&
+			(self->position.x + self->rect_collider.w <= other->position.x + other->rect_collider.w) &&
+			(self->position.y + self->rect_collider.h >= other->position.y) &&
+			(self->position.y + self->rect_collider.h >= other->position.y + other->rect_collider.h)){
+			self->position.x -= 20;
+			self->position.y -= 20;
+		}*/
+	}
+}
+
 void player_touch(Entity *self, Entity *other)
 {
 	NPC *npc;
 	if (!self)return;
-	if (strstr(other->name, "NPC") != NULL)
-	{
-		player->stats.life -= 1;
-		if (self->position.x + self->rect_collider.x > other->position.x)
-			self->position.x -= 20;
-	}
 	
+	resolve_collision(self, other);
 }
 
 void player_load_json()
@@ -307,7 +346,6 @@ Player *player_spawn(Vector2D position)
 		slog("position player: %f, %f", position.x, position.y);
 		player->ent->rect_collider.x = position.x;
 		player->ent->rect_collider.y = position.y;
-		slog("player collider: %f, %f", player->ent->rect_collider.x, player->ent->rect_collider.y);
 		player->ent->rect_collider.w = 100;
 		player->ent->rect_collider.h = 100;
 		player->ent->update = player_update;

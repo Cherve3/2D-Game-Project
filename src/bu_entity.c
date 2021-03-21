@@ -210,10 +210,17 @@ void print_entities()
 	int i;
 	for (i = 0; i < entity_manager.max_entities; i++)
 	{
-		slog("Entity: %s", entity_manager.entity_list[i].name);
-		slog("    Location:  %f, %f", entity_manager.entity_list[i].position.x, entity_manager.entity_list[i].position.y);
-		slog("    Dimension: %f, %f", entity_manager.entity_list[i].rect_collider.w, entity_manager.entity_list[i].rect_collider.h);
-		slog("    Inuse: %i\n", entity_manager.entity_list[i]._inuse, entity_manager.entity_list[i].position.y);
+		if (entity_manager.entity_list[i]._inuse){
+			slog("Entity: %s", entity_manager.entity_list[i].name);
+			slog("    Location:  %f, %f", entity_manager.entity_list[i].position.x, entity_manager.entity_list[i].position.y);
+			slog("    Dimension: %f, %f", entity_manager.entity_list[i].rect_collider.w, entity_manager.entity_list[i].rect_collider.h);
+			slog("    Inuse: %i\n", entity_manager.entity_list[i]._inuse, entity_manager.entity_list[i].position.y);
+		}
+		else if (entity_manager.entity_list[i].name != NULL){
+			slog("Entity: %s", entity_manager.entity_list[i].name);
+		}
+		else
+			slog("Entity null.");
 	}
 }
 /*eol@eof*/

@@ -11,10 +11,12 @@
 void door_touch(Entity *self, Entity *player)
 {
 	if (!self) return;
+	slog("Player touch: %s", player->name);
 	if (player == get_player()->ent)
 	{
 		level_load(self->data);
-		entity_free(self);
+		slog("Level loaded");
+		//entity_free(self);
 	}
 }
 
@@ -24,7 +26,7 @@ void door_think(Entity *self)
 	entity_collision_check(self);
 }
 
-Entity *door_spawn(Vector2D position, Vector2D dimension, TextWord **args)
+void door_spawn(Vector2D position, Vector2D dimension, TextWord **args)
 {
 	Entity *door;
 	TextLine *name;
@@ -44,7 +46,7 @@ Entity *door_spawn(Vector2D position, Vector2D dimension, TextWord **args)
 	door->onTouch = door_touch;
 	door->think = door_think;
 	door->data = args[1];
-	slog("Door spawn at position: %f, %f dimension: %f, %f and exits to %s", position.x, position.y, dimension.x, dimension.y, args);
+	slog("Door spawn at position: %f, %f dimension: %f, %f and exits to %s", position.x, position.y, dimension.x, dimension.y, args[1]);
 }
 
 /*eol@eof*/

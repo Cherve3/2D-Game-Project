@@ -53,7 +53,7 @@ Sprite *create_ui_text(TextLine filename, TTF_Font *font, TextLine text, SDL_Col
 	}
 	sprite = gf2d_text_sprite_load(filename, surface, -1, -1, 0);
 
-	if (!ui->player_menu.text_sprite[0])
+	if (!sprite)
 		slog("Sprite null");
 	return sprite;
 }
@@ -127,7 +127,7 @@ void ui_init()
 		slog("Player font is NULL");
 		slog(SDL_GetError());
 	}
-
+	slog("Fonts loaded.");
 	// HUD
 	ui->hud.base = gf2d_sprite_load_image("images/ui/base_bars.png");
 	ui->hud.health = gf2d_sprite_load_image("images/ui/health_bar.png");
@@ -140,7 +140,7 @@ void ui_init()
 	ui->player_menu.black.g = 0;
 	ui->player_menu.black.b = 0;
 
-	// TODO: Testing Text sprites
+	// Player stats text sprites
 	stat_menu_init();
 
 	//create_ui_text("statname",);
@@ -184,8 +184,6 @@ void ui_draw(Vector2D res)
 			y_pos += 20;
 		}
 	}
-
-
 }
 
 /*eol@eof*/

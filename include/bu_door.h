@@ -6,6 +6,6 @@
 
 #include "bu_entity.h"
 
-Entity *door_spawn(Vector2D position, Vector2D dimension, TextWord **args);
+void door_spawn(Vector2D position, Vector2D dimension, TextWord **args);
 
 #endif

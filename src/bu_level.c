@@ -22,7 +22,6 @@ void level_free()
 	gf2d_sprite_free(level->background);
 	gf2d_sprite_free(level->sprite);
 	
-
 	/*TODO: Does not close cleanly freeing sjson files*/
 	//sj_free(spawn_list);
 	//sj_free(level_json);
@@ -51,35 +50,39 @@ void clear_entities()
 		if (!get_entities_list()[i]._inuse) continue;
 		if (&get_entities_list()[i] == get_player()->ent) continue;
 		entity_free(&get_entities_list()[i]);
+		clear_npcs();
 	}
 }
 
 void level_spawn_entities(SJson *spawnList)
 {
 	int i = 0, count = 0;
-	SJson *item;
+	SJson *spawn_json;
 	TextWord *name;
 	TextWord **args = NULL;
 	Vector2D position, dimension;
 	NPCType type;
 	FightStyle style;
 
+	type = Friendly;
+	style = None;
 	args = gfc_allocate_array(sizeof(TextWord),2);
 
 	count = sj_array_get_count(spawnList);
 	slog("count: %i", count);
 
 	clear_entities();
+	slog("Entities cleared");
 
-	item = NULL;
+	spawn_json = NULL;
 	for (i = 0; i < count; i++)
 	{
 		vector2d_clear(position);
-		item = sj_array_get_nth(spawnList, i);
-		if (!item)continue;
+		spawn_json = sj_array_get_nth(spawnList, i);
+		if (!spawn_json)continue;
 		if (i == 0)
 		{
-			sj_value_as_vector2d(sj_object_get_value(item, "position_1"), &position);
+			sj_value_as_vector2d(sj_object_get_value(spawn_json, "position_1"), &position);
 
 			if (get_player()){
 				get_player()->ent->position.x = position.x;
@@ -90,35 +93,27 @@ void level_spawn_entities(SJson *spawnList)
 		}
 		else
 		{
-			sj_value_as_vector2d(sj_object_get_value(item, "position"), &position);
-			name = sj_get_string_value(sj_object_get_value(item, "name"));
+			sj_value_as_vector2d(sj_object_get_value(spawn_json, "position"), &position);
+			name = sj_get_string_value(sj_object_get_value(spawn_json, "name"));
 			
 			if (strstr(name, "exit") != NULL)
 			{
-				sj_value_as_vector2d(sj_object_get_value(item, "dimension"), &dimension);
-				args[0] = sj_get_string_value(sj_object_get_value(item, "name"));
-				args[1] = sj_get_string_value(sj_object_get_value(item, "location"));
+				sj_value_as_vector2d(sj_object_get_value(spawn_json, "dimension"), &dimension);
+				args[0] = sj_get_string_value(sj_object_get_value(spawn_json, "name"));
+				args[1] = sj_get_string_value(sj_object_get_value(spawn_json, "location"));
 			
 				door_spawn(position, dimension, args);
+				slog("Door spawned.");
 			}
 			else
 			{
-				sj_get_integer_value(sj_object_get_value(item, "type"), &type);
-				sj_get_integer_value(sj_object_get_value(item, "style"), &style);
-
+				sj_get_integer_value(sj_object_get_value(spawn_json, "type"), &type);
+				sj_get_integer_value(sj_object_get_value(spawn_json, "style"), &style);
 				npc_spawn(type, style, position);
-				/* TODO: spawning with the position does not work all the time
-							temp fix is setting the position like below*/
-				get_npc()[i - 1].ent->position.x = position.x;
-				get_npc()[i - 1].ent->position.y = position.y;
+				slog("NPC spawned.");
 			}
 		}
 	}
-
-
-	//slog("NPC 0 location: %f, %f",get_npc()[0].ent->position.x, get_npc()[0].ent->position.y);
-	//slog("NPC 1 location: %f, %f", get_npc()[1].ent->position.x, get_npc()[1].ent->position.y);
-	//slog("NPC 2 location: %f, %f", get_npc()[2].ent->position.x, get_npc()[2].ent->position.y);
 }
 
 void level_load(char *name)
@@ -127,12 +122,16 @@ void level_load(char *name)
 	SJson *item;
 	SJson *player_info;
 	Vector2D position;
-
+	position.x = 0;
+	position.y = 0;
 	if (spawn_list)
 		spawn_list = NULL;
 	spawn_list = sj_object_get_value(level_info, "spawn_list");
+	if (!spawn_list)
+		slog("Spawn list does not exist.");
 
 	slog("Loading level %s", name);
+
 	if (!level_info)
 		slog("Level does not exist.");
 
@@ -149,6 +148,7 @@ void level_load(char *name)
 	sj_get_float_value(sj_object_get_value(level_info, "height"), &level->height);
 
 	level_spawn_entities(spawn_list);
+	slog("Entities spawned.");
 	//print_entities();
 	//print_npc();
 }

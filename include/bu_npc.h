@@ -16,6 +16,7 @@ typedef enum {
 }NPCType;
 
 typedef enum {
+	None,
 	Brawler,
 	Weapon,
 	Thrower
@@ -71,7 +72,9 @@ void npc_spawn(NPCType type, FightStyle style, Vector2D position);
 * @brief Frees all the npc data
 * @param npc A pointer to the npc struct data to free
 */
-void npc_free();
+void npc_free_all();
+
+void clear_npcs();
 
 NPC *get_npc();
 

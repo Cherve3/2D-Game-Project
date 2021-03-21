@@ -35,7 +35,7 @@ void npc_load_json()
 		slog("name list null");
 }
 
-void npc_free()
+void npc_free_all()
 {
 	int i;
 	if (!npc) return;
@@ -54,6 +54,14 @@ void npc_free()
 	slog("NPCs freed");
 }
 
+void npc_free(NPC *self)
+{
+    self->fightStyle = 0;
+	self->isHostile = 0;
+	self->type = 0;
+	memset(&self->stats, 0, sizeof(NPCStats));
+}
+
 void npc_update(Entity *self)
 {
 	//self->position.x += 2 * cos(30 * GFC_DEGTORAD) *.06;
@@ -61,10 +69,21 @@ void npc_update(Entity *self)
 	entity_collision_check(self);
 }
 
+void clear_npcs()
+{
+	int i;
+	for (i = 0; i < npc_count; i++)
+	{
+		slog("NPC cleared: %s", npc[i].stats.name);
+		npc_free(&npc[i]);
+	}
+	npc_count = 0;
+}
+
 void npc_spawn(NPCType type, FightStyle style, Vector2D position)
 {	
-	TextWord *ent_name;
-
+	char ent_name[16];
+	slog("Spawning NPC...");
 	if (!npc)
 		npc = (NPC*)gfc_allocate_array(sizeof(NPC), 10);
 
@@ -75,19 +94,20 @@ void npc_spawn(NPCType type, FightStyle style, Vector2D position)
 	if (!npc[npc_count].ent)
 	{
 		slog("failed to create npc entity");
-		return NULL;
+		return;
 	}
-	sprintf(ent_name, "NPC_%i", npc_count);
-	npc[npc_count].ent->name = ent_name;
+	
+	npc[npc_count].ent->name = "NPC";
 	npc[npc_count].ent->sprite = gf2d_sprite_load_all("images/ed210_top.png", 128, 128, 16);
 	npc[npc_count].ent->frameRate = 0.1;
 	npc[npc_count].ent->frameCount = 16;
 	npc[npc_count].ent->update = npc_update;
 	npc[npc_count].ent->_inuse = 1;
 
-	vector2d_copy(npc->ent->position, position);
-	npc[npc_count].ent->rect_collider.x = npc->ent->position.x;
-	npc[npc_count].ent->rect_collider.y = npc->ent->position.y;
+	npc[npc_count].ent->position.x = position.x;
+	npc[npc_count].ent->position.y = position.y;
+	npc[npc_count].ent->rect_collider.x = position.x;
+	npc[npc_count].ent->rect_collider.y = position.y;
 	npc[npc_count].ent->rect_collider.w = 100;
 	npc[npc_count].ent->rect_collider.h = 100;
 	slog("NPC location: %f, %f", npc->ent->position.x, npc->ent->position.y);
