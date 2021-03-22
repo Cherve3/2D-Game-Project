@@ -7,6 +7,8 @@
 #include "bu_player.h"
 #include "bu_npc.h"
 #include "bu_level.h"
+#include "bu_combat.h"
+#include "bu_money.h"
 
 static Player *player = { 0 };
 static Uint8 player_count = 0;
@@ -47,9 +49,34 @@ void check_player_bounds(Entity *self)
 
 void player_controls(Entity *self)
 {
+	Uint32 x, y;
 	Uint8 *keys = SDL_GetKeyboardState(NULL);
-
+	SDL_GetMouseState(&x, &y);
+	
 	// Controls
+	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
+	{
+		get_player()->state.ATTACK = true;
+		get_player()->state.IDLE = false;
+		if (!player->stats.can_carry)
+			weapon_attack_left(NULL);
+		else
+			punch(player);
+		//slog("Left mouse button");
+	}
+	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT))
+	{
+		get_player()->state.ATTACK = true;
+		get_player()->state.IDLE = false;
+		if (!player->stats.can_carry)
+			weapon_attack_right(NULL);
+		else
+			kick(NULL);
+		//slog("Right mouse button");
+	}
+	if ( !(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT) ) && !(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)) )
+		get_player()->state.ATTACK = false;
+
 	if (keys[SDL_SCANCODE_D])
 	{
 		player->state.IDLE = false;
@@ -115,10 +142,11 @@ void player_controls(Entity *self)
 	}
 
 	// Update states
-	if (!keys[SDL_SCANCODE_S] && !keys[SDL_SCANCODE_A] && !keys[SDL_SCANCODE_D] && !keys[SDL_SCANCODE_W])
+	if (!keys[SDL_SCANCODE_S] && !keys[SDL_SCANCODE_A] && !keys[SDL_SCANCODE_D] && !keys[SDL_SCANCODE_W] && !(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) && !(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)))
 	{
 		player->state.IDLE = true;
 		player->state.WALK = false;
+		player->state.RUN = false;
 	}
 	if (keys[SDL_SCANCODE_LSHIFT] && (keys[SDL_SCANCODE_A] || keys[SDL_SCANCODE_W] || keys[SDL_SCANCODE_S] || keys[SDL_SCANCODE_D]))
 	{
@@ -141,6 +169,9 @@ void player_think(Entity* self)
 
 	check_player_bounds(self);
 	entity_collision_check(self);
+
+	if (player->stats.life == 0)
+		spawn_money(100, self->position);
 }
 
 void player_update(Entity *self)
@@ -188,10 +219,10 @@ void player_update(Entity *self)
 		player->state.RUN = false;
 
 	//slog("--------------------------------------");
-	//slog("RUN: %i", player->state.RUN);
-	//slog("WALK: %i", player->state.WALK);
-	//slog("IDLE: %i", player->state.IDLE);
-	//slog(": %i", player->state.ATTACK);
+	//slog("RUN:    %i", player->state.RUN);
+	//slog("WALK:   %i", player->state.WALK);
+	//slog("IDLE:   %i", player->state.IDLE);
+	//slog("ATTACK: %i", player->state.ATTACK);
 }
 
 void resolve_collision(Entity *self, Entity *other)

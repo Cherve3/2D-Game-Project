@@ -16,6 +16,7 @@
 #include "bu_npc.h"
 #include "bu_level.h"
 #include "bu_items.h"
+#include "bu_combat.h"
 
 int main(int argc, char * argv[])
 {
@@ -106,18 +107,17 @@ int main(int argc, char * argv[])
 		// Player bounds rect
 		//gf2d_draw_rect(rect, vec);
 		
-		// player collision rect
-		/*gf2d_draw_rect(gfc_sdl_rect(
-			get_player_collider().x, 
-			get_player_collider().y, 
-			get_player_collider().w, 
+		gf2d_draw_rect(gfc_sdl_rect(
+			get_player_collider().x+camera_get_offset().x,
+			get_player_collider().y + camera_get_offset().y,
+			get_player_collider().w,
 			get_player_collider().h),
 			vec);
-*/
+
 		entity_draw_all();
 		ui_update();
 		ui_draw(resolution);
-
+		punch(get_player());
         //UI elements last
         gf2d_sprite_draw(
             mouse,

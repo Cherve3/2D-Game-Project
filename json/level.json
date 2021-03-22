@@ -9,6 +9,7 @@
             {"name":"jock_1",       "position":[900.00,300.00],  "type":2, "style":1},
             {"name":"jock_2",       "position":[1000.00,800.00], "type":2, "style":1},
             {"name":"jock_3",       "position":[500.00,800.00],  "type":2, "style":1},
+            {"name":"jock_4",       "position":[200.00,200.00],  "type":2, "style":1},
             {"name":"locker_exit",  "position":[1900.00,250.00], "dimension":[5.00,880.00], "location":"main_entrance"}
             ]
     },

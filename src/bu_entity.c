@@ -125,6 +125,7 @@ void entity_free(Entity *ent)
 void entity_draw(Entity *ent)
 {
 	Vector2D drawPosition, offset;
+	Vector2D money_scale;
 	if (!ent)
 	{
 		slog("cannot draw NULL entity");
@@ -149,16 +150,34 @@ void entity_draw(Entity *ent)
 		}*/
 		drawPosition.x = ent->position.x + offset.x;
 		drawPosition.y = ent->position.y + offset.y;
-//		slog("Position: %f,%f", drawPosition.x, drawPosition.y);
-		gf2d_sprite_draw(
-			ent->sprite,
-			drawPosition,
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			(Uint32)ent->frame);
+		//slog("Position: %f,%f", drawPosition.x, drawPosition.y);
+		
+		money_scale.x = 0.1;
+		money_scale.y = 0.1;
+		if (strstr(ent->name, "Money") != NULL)
+		{
+			gf2d_sprite_draw(
+				ent->sprite,
+				drawPosition,
+				&money_scale,
+				NULL,
+				NULL,
+				NULL,
+				NULL,
+				(Uint32)ent->frame);
+		}
+		else
+		{
+			gf2d_sprite_draw(
+				ent->sprite,
+				drawPosition,
+				NULL,
+				NULL,
+				NULL,
+				NULL,
+				NULL,
+				(Uint32)ent->frame);
+		}
 	}
 }
 
