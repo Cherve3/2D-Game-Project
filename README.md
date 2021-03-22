@@ -1,6 +1,6 @@
 # 2D Beat'em Up Game
 ***
-## Description
+## Project Description
 This is my semester project for IT 276 - 2D Game Development. I started out using the professors seed project using SDL2 with a blank slate described below or here: [gameframework2d](https://github.com/engineerOfLies/gameframework2d "EngineerOfLies")
 
 ## About the game
@@ -18,6 +18,9 @@ You will be able to move around these areas freely after what needs to be comple
 |A|Move Left|
 |S|Move Down|
 |D|Move Right|
+|L-mouse|Punch or weapon attack 1|
+|R-mouse|Kick  or weapon attack 2|
+|F|Throw weapon|
 |Q|Pick up or drop items|
 |E|Interaction|
 |I|Inventory|

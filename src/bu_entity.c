@@ -36,7 +36,8 @@ void entity_manager_init(Uint32 max_entities)
 }
 
 void entity_manager_free()
-{
+{	
+	slog("Entity system closing...");
 	if (entity_manager.entity_list != NULL)
 	{
 		free(entity_manager.entity_list);

@@ -52,30 +52,53 @@ void player_controls(Entity *self)
 	Uint32 x, y;
 	Uint8 *keys = SDL_GetKeyboardState(NULL);
 	SDL_GetMouseState(&x, &y);
-	
+
 	// Controls
 	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
 	{
-		get_player()->state.ATTACK = true;
-		get_player()->state.IDLE = false;
-		if (!player->stats.can_carry)
-			weapon_attack_left(NULL);
-		else
-			punch(player);
+		if (((get_current_time() - player_time) > 500)){
+			get_player()->state.ATTACK = true;
+			get_player()->state.IDLE = false;
+			if (!player->stats.can_carry)
+				weapon_attack_left(player);
+			else
+				punch(player);
+
+			player_time = get_current_time();
+		}
 		//slog("Left mouse button");
 	}
 	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT))
 	{
-		get_player()->state.ATTACK = true;
-		get_player()->state.IDLE = false;
-		if (!player->stats.can_carry)
-			weapon_attack_right(NULL);
-		else
-			kick(NULL);
+		if (((get_current_time() - player_time) > 500)){
+			get_player()->state.ATTACK = true;
+			get_player()->state.IDLE = false;
+			if (!player->stats.can_carry)
+				weapon_attack_right(player);
+			else
+				kick(player);
+
+			player_time = get_current_time();
+		}
 		//slog("Right mouse button");
 	}
+
 	if ( !(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT) ) && !(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)) )
 		get_player()->state.ATTACK = false;
+
+	if (keys[SDL_SCANCODE_F] && player->stats.throw_item == true)
+	{
+		
+		if ( (get_current_time() - player_time) > 500 && 
+			player->stats.throw_item == true)
+		{
+			player->stats.throw_item = false;
+			player->stats.can_carry = true;
+			slog("Throwing item");
+			throw_weapon(player);
+			player_time = get_current_time();
+		}
+	}
 
 	if (keys[SDL_SCANCODE_D])
 	{
@@ -125,10 +148,7 @@ void player_controls(Entity *self)
 			player->state.WALK = true;
 		}
 	}
-	if (keys[SDL_SCANCODE_Q])
-	{
-		slog("drop or pick up item");
-	}
+
 	if (keys[SDL_SCANCODE_TAB])
 	{
 		if (player->stats.toggle_stats == false){
@@ -166,12 +186,17 @@ void player_think(Entity* self)
 {
 	if (!self)return;
 	player_controls(self);
-
+	//slog("Can Carry:     %i", player->stats.can_carry);
+	//slog("Pickup Item:   %i", player->stats.pickup_item);
+	//slog("Throw Item:    %i", player->stats.throw_item);
 	check_player_bounds(self);
 	entity_collision_check(self);
-
-	if (player->stats.life == 0)
-		spawn_money(100, self->position);
+	if (player->stats.life == 0 && player->stats.money != 0)
+	{
+		spawn_money(player->stats.money, self->position);
+		player->stats.money = 0;
+	}
+		
 }
 
 void player_update(Entity *self)
@@ -223,6 +248,7 @@ void player_update(Entity *self)
 	//slog("WALK:   %i", player->state.WALK);
 	//slog("IDLE:   %i", player->state.IDLE);
 	//slog("ATTACK: %i", player->state.ATTACK);
+
 }
 
 void resolve_collision(Entity *self, Entity *other)
@@ -355,6 +381,15 @@ Player *get_player()
 	return player;
 }
 
+void set_player_time(Uint32 time)
+{
+	player_time = time;
+}
+Uint32 get_player_time()
+{
+	return player_time;
+}
+
 Player *player_spawn(Vector2D position)
 {
 	if (!player)
@@ -379,15 +414,18 @@ Player *player_spawn(Vector2D position)
 		player->ent->rect_collider.y = position.y;
 		player->ent->rect_collider.w = 100;
 		player->ent->rect_collider.h = 100;
-		player->ent->update = player_update;
-		player->ent->onTouch = player_touch;
-		player->ent->think = player_think;
-		player->player_number = player_count;
+		player->ent->update			 = player_update;
+		player->ent->onTouch		 = player_touch;
+		player->ent->think			 = player_think;
+		player->player_number		 = player_count;
+
 		generate_player_stats(&player->stats);
-		player->stats.toggle_stats = false;
+
+		player->stats.toggle_stats     = false;
 		player->stats.toggle_inventory = false;
-		player->stats.pickup_item = false;
-		player->stats.can_carry = true;
+		player->stats.pickup_item      = false;
+		player->stats.can_carry        = true;
+		player->stats.throw_item       = false;
 		slog("Player %i spawning...", player->player_number);
 		player_time = SDL_GetTicks();
 	}

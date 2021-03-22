@@ -36,6 +36,7 @@ typedef struct{
 	Bool toggle_inventory;
 	Bool pickup_item;
 	Bool can_carry;
+	Bool throw_item;
 
 }PlayerStats;
 
@@ -84,5 +85,9 @@ void player_free();
 Rect get_player_collider();
 
 Player *get_player();
+
+void set_player_time(Uint32 time);
+
+Uint32 get_player_time();
 
 #endif

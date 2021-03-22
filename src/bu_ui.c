@@ -22,12 +22,13 @@ float stamina_ratio;
 
 void hud_free()
 {
+	slog("freeing hud");
 	if (!ui)return;
 
 	memset(ui->hud.base, 0, sizeof(Sprite));
 	memset(ui->hud.health, 0, sizeof(Sprite));
 	memset(ui->hud.stamina, 0, sizeof(Sprite));
-	slog("freeing hud");
+	
 }
 
 void start_menu_free()
@@ -153,7 +154,7 @@ void ui_init()
 	
 	slog("UI initialized");
 	atexit(hud_free);
-	atexit(start_menu_free);
+	//atexit(start_menu_free);
 }
 
 void ui_update()

@@ -3,6 +3,7 @@
 
 #include "gf2d_config.h"
 
+#include "bu_timer.h"
 #include "bu_items.h"
 #include "bu_player.h"
 #include "bu_entity.h"
@@ -45,19 +46,18 @@ void item_manager_close()
 {
 	int i;
 
+	slog("Item system closing...");
 	sj_free(item_json);
 
 	if (items.item_list != NULL)
 	{
 		for (i = 0; i < items.item_count; i++)
 		{
-			entity_free(&items.item_list[i].ent);
 			item_free(&items.item_list[i]);
 		}
 		free(items.item_list);
 	}
-	/*TODO: Does not close cleanly using this memeset*/
-	//memset(&items, 0, sizeof(ItemManager));
+	memset(&items, 0, sizeof(ItemManager));
 	slog("Item System Closed");
 }
 
@@ -107,23 +107,46 @@ void item_touch(Entity *self, Entity *player)
 	{
 		if (keys[SDL_SCANCODE_Q] && get_player()->stats.can_carry)
 		{
-			get_player()->stats.can_carry = false;
-			item->picked_up = true;
-			slog("Item pick up");
-			
+			if (get_current_time() - get_player_time() > 500)
+			{
+				get_player()->stats.can_carry = false;
+				get_player()->stats.throw_item = true;
+				item->picked_up = true;
+				set_player_time(get_current_time());
+				slog("Item pick up");
+			}
 		}
 		else if (keys[SDL_SCANCODE_Q] && !get_player()->stats.can_carry)
 		{
-			get_player()->stats.can_carry = true;
-			item->picked_up = false;
-			slog("Item dropped");
+			if (get_current_time() - get_player_time() > 500)
+			{
+				get_player()->stats.can_carry = true;
+				get_player()->stats.throw_item = false;
+				item->picked_up = false;
+				set_player_time(get_current_time());
+				slog("Item dropped");
+			}
 		}
 	}
 }
 
 void item_think(Entity *self)
 {
+	Item *item;
 	if (!self) return;
+	item = (Item*)self->data;
+	
+	if (item->picked_up && !get_player()->stats.throw_item)
+	{
+		item->picked_up = false;
+		get_player()->stats.can_carry  = true;
+		get_player()->stats.throw_item = false;
+		//slog("item position: %f", item->ent->position.x);
+		item->ent->position.x += 10 * (5 * SDL_cos(0));
+		item->ent->rect_collider.x = item->ent->position.x;
+		item->ent->rect_collider.y = item->ent->position.y;
+	}
+
 	entity_collision_check(self);
 }
 

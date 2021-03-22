@@ -115,10 +115,11 @@ int main(int argc, char * argv[])
 			vec);
 
 		entity_draw_all();
+
+		//UI elements last
 		ui_update();
 		ui_draw(resolution);
-		punch(get_player());
-        //UI elements last
+
         gf2d_sprite_draw(
             mouse,
             vector2d(mx,my),
