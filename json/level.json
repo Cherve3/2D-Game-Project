@@ -48,7 +48,11 @@
         "height":720.00,
         "spawn_list":[
             {"name":"player_start", "position_1":[425.00,600.00]},
-            {"name":"shop",         "position":[475.00,50.00], "type":6, "style":3},
+            {"name":"shop_1",       "position":[475.00,50.00], "type":6, "style":3},
+            {"name":"helmet",       "position":[100.00,100.00], "type":2},
+            {"name":"t_shirt",      "position":[300.00,100.00], "type":2},
+            {"name":"pants",        "position":[500.00,100.00], "type":2},
+            {"name":"runners",     "position":[700.00,100.00], "type":2},
             {"name":"shop_exit",    "position":[475.00,720.00], "dimension":[100.00,100.00], "location":"front_lawn"}
         ]
     }

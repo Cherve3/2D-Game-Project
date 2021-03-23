@@ -385,6 +385,7 @@ void set_player_time(Uint32 time)
 {
 	player_time = time;
 }
+
 Uint32 get_player_time()
 {
 	return player_time;

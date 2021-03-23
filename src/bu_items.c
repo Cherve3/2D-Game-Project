@@ -169,7 +169,6 @@ void item_create(TextWord *item_name, ItemType type, Item *item)
 	SJson *info;
 	Vector2D dimension;
 
-
 	switch (type)
 	{
 		case consumable:

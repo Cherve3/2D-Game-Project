@@ -7,6 +7,7 @@
 #include "bu_camera.h"
 #include "bu_level.h"
 #include "bu_door.h"
+#include "bu_items.h"
 #include "bu_player.h"
 #include "bu_npc.h"
 
@@ -61,10 +62,12 @@ void level_spawn_entities(SJson *spawnList)
 	TextWord *name;
 	TextWord **args = NULL;
 	Vector2D position, dimension;
-	NPCType type;
+	ItemType item_type;
+	NPCType npc_type;
 	FightStyle style;
 
-	type = Friendly;
+	item_type = consumable;
+	npc_type = Friendly;
 	style = None;
 	args = gfc_allocate_array(sizeof(TextWord),2);
 
@@ -105,12 +108,21 @@ void level_spawn_entities(SJson *spawnList)
 				door_spawn(position, dimension, args);
 				slog("Door spawned.");
 			}
+			else if (strstr(name, "friendly") != NULL || strstr(name, "nerd") != NULL || 
+				strstr(name, "jock") != NULL || strstr(name, "prep") != NULL ||
+				strstr(name, "goth") != NULL || strstr(name, "mobster") != NULL ||
+				strstr(name, "shop") != NULL || strstr(name, "questgiver") != NULL)
+			{
+				sj_get_integer_value(sj_object_get_value(spawn_json, "type"), &npc_type);
+				sj_get_integer_value(sj_object_get_value(spawn_json, "style"), &style);
+				npc_spawn(npc_type, style, position);
+				slog("NPC spawned.");
+			}
 			else
 			{
-				sj_get_integer_value(sj_object_get_value(spawn_json, "type"), &type);
-				sj_get_integer_value(sj_object_get_value(spawn_json, "style"), &style);
-				npc_spawn(type, style, position);
-				slog("NPC spawned.");
+				sj_get_integer_value(sj_object_get_value(spawn_json, "type"), &item_type);
+				item_new(name,item_type, position);
+				slog("item spawned");
 			}
 		}
 	}
