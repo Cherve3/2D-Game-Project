@@ -13,7 +13,7 @@ static Uint32 npc_count = 0;
 static SJson *npc_info = NULL;
 static SJson *name_list = NULL;
 
-void print_npc_stats();
+void print_npc_stats(Uint32 num);
 void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style);
 
 void npc_load_json()
@@ -64,9 +64,20 @@ void npc_free(NPC *self)
 
 void npc_update(Entity *self)
 {
+	NPC *npc;
+	if (!self) return;
 	//self->position.x += 2 * cos(30 * GFC_DEGTORAD) *.06;
 	//self->position.y -= 2 * sin(30 * GFC_DEGTORAD) *.05;
+	npc = (NPC*)self->data;
 	entity_collision_check(self);
+
+	if (npc->stats.life == 0)
+	{
+		spawn_money(npc->stats.money, self->position);
+		entity_free(self);
+		npc_free(npc);
+		
+	}
 }
 
 void clear_npcs()
@@ -103,6 +114,7 @@ void npc_spawn(NPCType type, FightStyle style, Vector2D position)
 	npc[npc_count].ent->frameCount = 16;
 	npc[npc_count].ent->update = npc_update;
 	npc[npc_count].ent->_inuse = 1;
+	npc[npc_count].ent->data = (void*)&npc[npc_count];
 
 	npc[npc_count].ent->position.x = position.x;
 	npc[npc_count].ent->position.y = position.y;
@@ -189,7 +201,7 @@ void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style)
 	sj_get_integer_value(sj_object_get_value(npc_stats, "kick"),			&stats->kick);
 	sj_get_integer_value(sj_object_get_value(npc_stats, "weapon"),			&stats->weapon);
 	sj_get_integer_value(sj_object_get_value(npc_stats, "throwing"),		&stats->throwing);
-
+	slog("", stats->life);
 	if (!npc_stats)
 	{
 		slog("Failed to load npc json data %s", sj_get_error());
@@ -210,27 +222,28 @@ void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style)
 		stats->throwing += 10;
 	}
 
-	//print_npc_stats();
+	print_npc_stats(npc_count);
 }
 
-void print_npc_stats()
+void print_npc_stats(Uint32 num)
 {
+	
 	slog("NPC stats:");
-	slog("           Level: %i", npc[0].stats.level);
-	slog("           Money: %s", npc[0].stats.money);
+	slog("           Level: %i", npc[num].stats.level);
+	slog("           Money: %i", npc[num].stats.money);
 
-	slog("            Life: %i", npc[0].stats.life);
-	slog("         Stamina: %i", npc[0].stats.stamina);
-	slog("     Stamina Max: %i", npc[0].stats.stamina_max);
-	slog("   Stamina Regen: %i", npc[0].stats.stamina_regen);
+	slog("            Life: %i", npc[num].stats.life);
+	slog("         Stamina: %i", npc[num].stats.stamina);
+	slog("     Stamina Max: %i", npc[num].stats.stamina_max);
+	slog("   Stamina Regen: %i", npc[num].stats.stamina_regen);
 
-	slog("        Strength: %i", npc[0].stats.strength);
-	slog("       Willpower: %i", npc[0].stats.willpower);
-	slog("         Agility: %i", npc[0].stats.agility);
-	slog("           Punch: %i", npc[0].stats.punch);
-	slog("            Kick: %i", npc[0].stats.kick);
-	slog("            Kick: %i", npc[0].stats.weapon);
-	slog("        Throwing: %i", npc[0].stats.throwing);
+	slog("        Strength: %i", npc[num].stats.strength);
+	slog("       Willpower: %i", npc[num].stats.willpower);
+	slog("         Agility: %i", npc[num].stats.agility);
+	slog("           Punch: %i", npc[num].stats.punch);
+	slog("            Kick: %i", npc[num].stats.kick);
+	slog("          Weapon: %i", npc[num].stats.weapon);
+	slog("        Throwing: %i", npc[num].stats.throwing);
 }
 
 NPC *get_npc()

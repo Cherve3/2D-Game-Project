@@ -14,6 +14,7 @@ typedef struct{
 
 	Bool _inuse;
 	Bool picked_up;
+	Bool store_item;
 	ItemType type;
 	char *name;
 	char *description;

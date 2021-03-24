@@ -10,6 +10,7 @@
 #include "bu_items.h"
 #include "bu_player.h"
 #include "bu_npc.h"
+#include "bu_shop.h"
 
 static Level *level = { 0 };
 static SJson *level_json = NULL;
@@ -76,6 +77,8 @@ void level_spawn_entities(SJson *spawnList)
 
 	clear_entities();
 	slog("Entities cleared");
+
+	shop_init();
 
 	spawn_json = NULL;
 	for (i = 0; i < count; i++)

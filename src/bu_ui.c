@@ -5,13 +5,16 @@
 #include "gfc_text.h"
 
 #include "bu_ui.h"
+#include "bu_shop.h"
 #include "bu_player.h"
 
 typedef struct
 {
 	HUD hud;
-	StartMenu start_menu;
+	StartMenu  start_menu;
 	PlayerMenu player_menu;
+	EquipMenu  equip_menu;
+	ShopUI     shop_ui;
 }UI;
 
 static UI *ui = { 0 };
@@ -41,12 +44,15 @@ void start_menu_free()
 	slog("Freeing menu");
 }
 
-Sprite *create_ui_text(TextLine filename, TTF_Font *font, TextLine text, SDL_Color color)
+Sprite *create_ui_text(TextLine filename, TTF_Font *font, TextLine text, SDL_Color color, Bool text_wrap)
 {
 	Sprite *sprite = NULL;
 	SDL_Surface	*surface = NULL;
 
-	surface = TTF_RenderText_Blended(font, text, color);
+	if (text_wrap)
+		surface =TTF_RenderText_Blended_Wrapped(font, text, color, 32);
+	else
+		surface = TTF_RenderText_Blended(font, text, color);
 
 	if (!surface)
 	{
@@ -65,31 +71,49 @@ void stat_menu_init()
 	TextLine text;
 
 	snprintf(text, sizeof(TextLine), "Name:             %s", get_player()->stats.name);
-	ui->player_menu.text_sprite[0] = create_ui_text("name_text", ui->player_menu.player_font, text, ui->player_menu.black);
+	ui->player_menu.text_sprite[0] = create_ui_text("name_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
 	snprintf(text, sizeof(TextLine), "Level:             %i", get_player()->stats.level);
-	ui->player_menu.text_sprite[1] = create_ui_text("level_text", ui->player_menu.player_font, text, ui->player_menu.black);
+	ui->player_menu.text_sprite[1] = create_ui_text("level_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
 	snprintf(text, sizeof(TextLine), "Money:            %i", get_player()->stats.money);
-	ui->player_menu.text_sprite[2] = create_ui_text("money_text", ui->player_menu.player_font, text, ui->player_menu.black);
+	ui->player_menu.text_sprite[2] = create_ui_text("money_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
 	snprintf(text, sizeof(TextLine), "Life:                %i /%i", get_player()->stats.life, get_player()->stats.life_max);
-	ui->player_menu.text_sprite[3] = create_ui_text("life_text", ui->player_menu.player_font, text, ui->player_menu.black);
+	ui->player_menu.text_sprite[3] = create_ui_text("life_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
 	snprintf(text, sizeof(TextLine), "Stamina:          %i /%i", get_player()->stats.stamina, get_player()->stats.stamina_max);
-	ui->player_menu.text_sprite[4] = create_ui_text("stamina_text", ui->player_menu.player_font, text, ui->player_menu.black);
+	ui->player_menu.text_sprite[4] = create_ui_text("stamina_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
 	snprintf(text, sizeof(TextLine), "Stamina regen: %i", get_player()->stats.level);
-	ui->player_menu.text_sprite[5] = create_ui_text("regen_text", ui->player_menu.player_font, text, ui->player_menu.black);
+	ui->player_menu.text_sprite[5] = create_ui_text("regen_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
 	snprintf(text, sizeof(TextLine), "Strength:        %i", get_player()->stats.level);
-	ui->player_menu.text_sprite[6] = create_ui_text("strength_text", ui->player_menu.player_font, text, ui->player_menu.black);
+	ui->player_menu.text_sprite[6] = create_ui_text("strength_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
 	snprintf(text, sizeof(TextLine), "Agility:           %i", get_player()->stats.level);
-	ui->player_menu.text_sprite[7] = create_ui_text("agility_text", ui->player_menu.player_font, text, ui->player_menu.black);
+	ui->player_menu.text_sprite[7] = create_ui_text("agility_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
 	snprintf(text, sizeof(TextLine), "Willpower:        %i", get_player()->stats.level);
-	ui->player_menu.text_sprite[8] = create_ui_text("willpower_text", ui->player_menu.player_font, text, ui->player_menu.black);
+	ui->player_menu.text_sprite[8] = create_ui_text("willpower_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
 	snprintf(text, sizeof(TextLine), "Punch:             %i", get_player()->stats.level);
-	ui->player_menu.text_sprite[9] = create_ui_text("punch_text", ui->player_menu.player_font, text, ui->player_menu.black);
+	ui->player_menu.text_sprite[9] = create_ui_text("punch_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
 	snprintf(text, sizeof(TextLine), "Kick:               %i", get_player()->stats.level);
-	ui->player_menu.text_sprite[10] = create_ui_text("kick_text", ui->player_menu.player_font, text, ui->player_menu.black);
+	ui->player_menu.text_sprite[10] = create_ui_text("kick_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
 	snprintf(text, sizeof(TextLine), "Weapon:           %i", get_player()->stats.level);
-	ui->player_menu.text_sprite[11] = create_ui_text("weapon_text", ui->player_menu.player_font, text, ui->player_menu.black);
+	ui->player_menu.text_sprite[11] = create_ui_text("weapon_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
 	snprintf(text, sizeof(TextLine), "Throwing:        %i", get_player()->stats.level);
-	ui->player_menu.text_sprite[12] = create_ui_text("throwing_text", ui->player_menu.player_font, text, ui->player_menu.black);
+	ui->player_menu.text_sprite[12] = create_ui_text("throwing_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
+}
+
+void equip_menu_init()
+{
+	ui->equip_menu.equip_count = 4;
+	ui->equip_menu.equip_menu = gf2d_sprite_load_image("images/ui/equip_info.png");
+	ui->equip_menu.equip_items = (Sprite*)gfc_allocate_array(sizeof(Sprite), ui->equip_menu.equip_count);
+
+}
+
+void shop_ui_init()
+{
+	ui->shop_ui.shop_text = gfc_allocate_array(sizeof(Sprite), 1);
+	ui->shop_ui.black = ui->player_menu.black;
+	ui->shop_ui.text_box = gf2d_sprite_load_image("images/ui/text_box.png");
+	ui->shop_ui.shop_font = ui->player_menu.player_font;
+	ui->shop_ui.shop_text[0] = create_ui_text("shop_text", ui->shop_ui.shop_font, "Do you want to buy this item?", ui->shop_ui.black, NULL);
+	ui->shop_ui.shop_text[1] = create_ui_text("shop_text", ui->shop_ui.shop_font, "You bought the item.", ui->shop_ui.black, 1);
 }
 
 void ui_init()
@@ -143,7 +167,8 @@ void ui_init()
 
 	// Player stats text sprites
 	stat_menu_init();
-
+	equip_menu_init();
+	shop_ui_init();
 	//create_ui_text("statname",);
 
 	if (!ui->hud.base) slog("ui base is NULL"); return;
@@ -174,10 +199,12 @@ void ui_draw(Vector2D res)
 	scale_stamina = vector2d(stamina_ratio * 0.5, 0.5);
 	scale_menu = vector2d(0.3, 0.3);
 
+	// Draw Hud
 	gf2d_sprite_draw(ui->hud.base, vector2d(res.x * 0.01, 0), &scale_hud, NULL, NULL, NULL, NULL, NULL);
 	gf2d_sprite_draw(ui->hud.health, vector2d(res.x * 0.014, res.y * 0.03), &scale_life, NULL, NULL, NULL, NULL, NULL);
 	gf2d_sprite_draw(ui->hud.stamina, vector2d(res.x * 0.014, res.y * 0.084), &scale_stamina, NULL, NULL, NULL, NULL, NULL);
 	
+	// Draw stats
 	if (get_player()->stats.toggle_stats){
 		gf2d_sprite_draw(ui->player_menu.stat_menu, vector2d(res.x * 0.014, res.y * 0.1), &scale_menu, NULL, NULL, NULL, NULL, NULL);
 		for (i = 0; i < ui->player_menu.text_count; i++){
@@ -185,6 +212,24 @@ void ui_draw(Vector2D res)
 			y_pos += 20;
 		}
 	}
+	// Draw inventory
+	if (get_player()->stats.toggle_inventory){
+		gf2d_sprite_draw(ui->equip_menu.equip_menu, vector2d(res.x * 0.4, res.y * 0.1), &scale_menu, NULL, NULL, NULL, NULL, NULL);
+		for (i = 0; i < ui->equip_menu.equip_count; i++)
+		{
+			if (!ui->equip_menu.equip_items[i])
+				gf2d_sprite_draw(ui->equip_menu.equip_items[i], vector2d(res.x * 0.4, res.y * 0.1), &scale_menu, NULL, NULL, NULL, NULL, NULL);
+		}
+	}
+	// Draw shop
+	if (get_shop_open())
+	{
+		gf2d_sprite_draw(ui->shop_ui.text_box, vector2d(res.x * 0.2, res.y * 0.7), NULL, NULL, NULL, NULL, NULL, NULL);
+		gf2d_sprite_draw(ui->shop_ui.shop_text[0], vector2d(res.x * 0.3, res.y * 0.8), &scale_menu, NULL, NULL, NULL, NULL, NULL);
+		//buy_item();
+	}
+
+
 }
 
 /*eol@eof*/

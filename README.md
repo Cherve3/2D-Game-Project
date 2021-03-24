@@ -11,6 +11,8 @@ Beat 'em up game with action role-playing elements Inspired by River City Ransom
 You start off in the locker room of the school inside there are other jocks that are inside you leave anyhere on the right side of the level. You will enter the main entrance of the school. A big open area where the preppy students hang out and chat. Moving forward to the right of the main entrance exits the school to the front lawn and the start of the city. There is a shop on the corner where health conumables will be available and items to power up your character. The alleyways are filled with shady characters beware.
 
 You will be able to move around these areas freely after what needs to be completed in that area. Fight any hostile npcs to earn cash to spend at the corner shop. 
+
+Store controls - collide with the item you want and press E to interact with the item. Left mouse click to buy the item. Press E again to cancel.
 ### Controls
 |Button|Description|
 |------|-----------|

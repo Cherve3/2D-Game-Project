@@ -7,6 +7,7 @@
 #include "bu_items.h"
 #include "bu_player.h"
 #include "bu_entity.h"
+#include "bu_shop.h"
 
 typedef struct
 {
@@ -103,31 +104,43 @@ void item_touch(Entity *self, Entity *player)
 	keys = SDL_GetKeyboardState(NULL);
 	if (!self) return;
 	item = (Item*)self->data;
-	if (player == get_player()->ent)
+	if (player != get_player()->ent) return;
+
+	if (keys[SDL_SCANCODE_Q] && get_player()->stats.can_carry && item->store_item == false)
 	{
-		if (keys[SDL_SCANCODE_Q] && get_player()->stats.can_carry)
+		if (get_current_time() - get_player_time() > 500)
 		{
-			if (get_current_time() - get_player_time() > 500)
-			{
-				get_player()->stats.can_carry = false;
-				get_player()->stats.throw_item = true;
-				item->picked_up = true;
-				set_player_time(get_current_time());
-				slog("Item pick up");
-			}
-		}
-		else if (keys[SDL_SCANCODE_Q] && !get_player()->stats.can_carry)
-		{
-			if (get_current_time() - get_player_time() > 500)
-			{
-				get_player()->stats.can_carry = true;
-				get_player()->stats.throw_item = false;
-				item->picked_up = false;
-				set_player_time(get_current_time());
-				slog("Item dropped");
-			}
+			get_player()->stats.can_carry = false;
+			get_player()->stats.throw_item = true;
+			item->picked_up = true;
+			set_player_time(get_current_time());
+			slog("Item pick up");
 		}
 	}
+	else if (keys[SDL_SCANCODE_Q] && !get_player()->stats.can_carry && item->store_item == false)
+	{
+		if (get_current_time() - get_player_time() > 500)
+		{
+			get_player()->stats.can_carry = true;
+			get_player()->stats.throw_item = false;
+			item->picked_up = false;
+			set_player_time(get_current_time());
+			slog("Item dropped");
+		}
+	}
+	
+	if (keys[SDL_SCANCODE_E] && item->store_item == true)
+	{
+		
+		if (get_current_time() - get_player_time() > 500)
+		{
+			slog("item buying");
+			open_shop();
+			set_player_time(get_current_time());
+		}
+	}
+	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT) && get_shop_open())
+		buy_item(item, player);
 }
 
 void item_think(Entity *self)
@@ -173,30 +186,80 @@ void item_create(TextWord *item_name, ItemType type, Item *item)
 	{
 		case consumable:
 			item_info = sj_object_get_value(item_json, "consumable");
-			if (gfc_word_cmp(item_name, "candy") == 0)
-				info = sj_object_get_value(item_info, "candy");
-			if (gfc_word_cmp(item_name, "sandwich") == 0)
-				info = sj_object_get_value(item_info, "sandwich");
+			item->store_item = true;
+			if (gfc_word_cmp(item_name, "item_candy") == 0)
+			{
+				info = sj_object_get_value(item_info, "item_candy");
+				item->ent->name = "item_candy";
+			}
+			if (gfc_word_cmp(item_name, "item_sandwich") == 0)
+			{
+				info = sj_object_get_value(item_info, "item_sandwich");
+				item->ent->name = "item_sandwich";
+			}
+			if (gfc_word_cmp(item_name, "book_punch") == 0)
+			{
+				info = sj_object_get_value(item_info, "book_punch");
+				item->ent->name = "book_punch";
+			}
+			if (gfc_word_cmp(item_name, "book_kick") == 0)
+			{
+				info = sj_object_get_value(item_info, "book_kick");
+				item->ent->name = "book_kick";
+			}
+			if (gfc_word_cmp(item_name, "book_weapon") == 0)
+			{
+				info = sj_object_get_value(item_info, "book_weapon");
+				item->ent->name = "book_weapon";
+			}
+			if (gfc_word_cmp(item_name, "book_throw") == 0)
+			{
+				info = sj_object_get_value(item_info, "book_throw");
+				item->ent->name = "book_throw";
+			}
 			break;
 		case weapon:
 			item_info = sj_object_get_value(item_json, "weapon");
-			if (gfc_word_cmp(item_name, "bat") == 0)
-				info = sj_object_get_value(item_info, "bat");
-			if (gfc_word_cmp(item_name, "chain") == 0)
-				info = sj_object_get_value(item_info, "chain");
-			if (gfc_word_cmp(item_name, "stick") == 0)
-				info = sj_object_get_value(item_info, "stick");
+			item->store_item = false;
+			if (gfc_word_cmp(item_name, "item_bat") == 0)
+			{
+				info = sj_object_get_value(item_info, "item_bat");
+				item->ent->name = "item_bat";
+			}
+			if (gfc_word_cmp(item_name, "item_chain") == 0)
+			{
+				info = sj_object_get_value(item_info, "item_chain");
+				item->ent->name = "item_chain";
+			}
+			if (gfc_word_cmp(item_name, "item_stick") == 0)
+			{
+				info = sj_object_get_value(item_info, "item_stick");
+				item->ent->name = "item_stick";
+			}
 			break;
 		case equipment:
 			item_info = sj_object_get_value(item_json, "equipment");
-			if (gfc_word_cmp(item_name, "helmet") == 0)
-				info = sj_object_get_value(item_info, "helmet");
-			if (gfc_word_cmp(item_name, "t_shirt") == 0)
-				info = sj_object_get_value(item_info, "t_shirt");
-			if (gfc_word_cmp(item_name, "pants") == 0)
-				info = sj_object_get_value(item_info, "pants");
-			if (gfc_word_cmp(item_name, "runners") == 0)
-				info = sj_object_get_value(item_info, "runners");
+			item->store_item = true;
+			if (gfc_word_cmp(item_name, "item_helmet") == 0)
+			{
+				info = sj_object_get_value(item_info, "item_helmet");
+				item->ent->name = "item_helmet";
+			}
+			if (gfc_word_cmp(item_name, "item_t_shirt") == 0)
+			{
+				info = sj_object_get_value(item_info, "item_t_shirt");
+				item->ent->name = "item_t_shirt";
+			}
+			if (gfc_word_cmp(item_name, "item_pants") == 0)
+			{
+				info = sj_object_get_value(item_info, "item_pants");
+				item->ent->name = "item_pants";
+			}
+			if (gfc_word_cmp(item_name, "item_runners") == 0)
+			{
+				info = sj_object_get_value(item_info, "item_runners");
+				item->ent->name = "item_runners";
+			}
 			break;
 	}
 
@@ -215,10 +278,10 @@ void item_create(TextWord *item_name, ItemType type, Item *item)
 	sj_get_integer_value(sj_object_get_value(info, "cost"), &item->cost);
 	item->ent->sprite = gf2d_sprite_load_image(sj_get_string_value(sj_object_get_value(info, "sprite")));
 	sj_value_as_vector2d(sj_object_get_value(info, "dimensions"), &dimension);
-	slog("dimensions: %f, %f", dimension.x, dimension.y);
-	item->ent->rect_collider.w = dimension.x;
-	item->ent->rect_collider.h = dimension.y;
-	slog("dimensions: %f, %f", item->ent->rect_collider.x, item->ent->rect_collider.y);
+	//slog("dimensions: %f, %f", dimension.x, dimension.y);
+	item->ent->rect_collider.w = 90;
+	item->ent->rect_collider.h = 90;
+	//slog("dimensions: %f, %f", item->ent->rect_collider.x, item->ent->rect_collider.y);
 }
 
 void item_new(TextWord *item_name, ItemType type, Vector2D position)

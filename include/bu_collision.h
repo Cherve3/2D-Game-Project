@@ -7,6 +7,6 @@ Bool player_bounds_collision(Rect player, Rect bounds);
 
 Bool entity_collision(Rect ent, Rect other);
 
-Bool attack_collision(Rect attack);
+Bool attack_collision(Rect attack, int damage);
 
 #endif

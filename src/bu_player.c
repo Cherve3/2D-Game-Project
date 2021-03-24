@@ -149,16 +149,24 @@ void player_controls(Entity *self)
 		}
 	}
 
-	if (keys[SDL_SCANCODE_TAB])
+	// toggle Menus
+	if (keys[SDL_SCANCODE_TAB] && (get_current_time() - player_time) > 300)
 	{
-		if (player->stats.toggle_stats == false){
+		if (player->stats.toggle_stats == false)
 			player->stats.toggle_stats = true;
-			slog("toggle stats = %i", player->stats.toggle_stats);
-		}
-		else{
+		else
 			player->stats.toggle_stats = false;
-			slog("toggle stats = %i", player->stats.toggle_stats);
-		}
+
+		player_time = get_current_time();
+	}
+
+	if (keys[SDL_SCANCODE_I] && (get_current_time() - player_time) > 300)
+	{
+		if (player->stats.toggle_inventory == false)
+			player->stats.toggle_inventory = true;
+		else
+			player->stats.toggle_inventory = false;
+		player_time = get_current_time();
 	}
 
 	// Update states
@@ -418,6 +426,7 @@ Player *player_spawn(Vector2D position)
 		player->ent->update			 = player_update;
 		player->ent->onTouch		 = player_touch;
 		player->ent->think			 = player_think;
+		player->ent->data			 = (void*)player;
 		player->player_number		 = player_count;
 
 		generate_player_stats(&player->stats);

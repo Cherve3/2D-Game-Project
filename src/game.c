@@ -83,7 +83,7 @@ int main(int argc, char * argv[])
 	// Level
 	level_load("locker_room");
 	ui_init();
-	item_new("bat", weapon, vector2d(100, 100));
+	item_new("item_bat", weapon, vector2d(100, 100));
 	slog_sync();
 
 	/*main game loop*/

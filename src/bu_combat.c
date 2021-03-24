@@ -29,7 +29,7 @@ void punch(Player *player)
 
 	draw_attack(punch.collider);
 
-	if (attack_collision(punch.collider))
+	if (attack_collision(punch.collider, punch.damage))
 		slog("Punch Collided");
 	
 	
@@ -48,7 +48,7 @@ void kick(Player *player)
 
 	draw_attack(kick.collider);
 
-	if (attack_collision(kick.collider))
+	if (attack_collision(kick.collider, kick.damage))
 		slog("Kick Collided");
 }
 
@@ -71,7 +71,7 @@ void weapon_attack_left(Player *player)
 
 	draw_attack(weapon_left.collider);
 
-	if (attack_collision(weapon_left.collider))
+	if (attack_collision(weapon_left.collider, weapon_left.damage))
 		slog("Weapon attack 1 Collided");
 
 }
@@ -89,7 +89,7 @@ void weapon_attack_right(Player *player)
 
 	draw_attack(weapon_right.collider);
 
-	if (attack_collision(weapon_right.collider))
+	if (attack_collision(weapon_right.collider, weapon_right.damage))
 		slog("Weapon attack 2 Collided");
 }
 

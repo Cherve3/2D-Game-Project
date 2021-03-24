@@ -1,53 +1,93 @@
 {
     "consumable":
     {
-        "candy":
+        "item_candy":
         {
             "name":"Candy Bar",
-            "sprite":"images/items/candy.png",
+            "sprite":"images/items/item_candy.png",
             "dimensions":[180,155],
             "description":"A chocolate candy bar.",
             "armor":0,
             "damage":20,
             "cost":5
         },
-        "sandwich":
+        "item_sandwich":
         {
             "name":"Sandwich",
-            "sprite":"images/items/sandwich.png",
+            "sprite":"images/items/item_sandwich.png",
             "dimensions":[180,155],
             "description":"A premade sandwich.",
             "armor":0,
             "damage":40,
             "cost":10
+        },
+        "book_punch":
+        {
+            "name":"Punch Book",
+            "sprite":"images/items/book_punch.png",
+            "dimensions":[400,400],
+            "description":"A book about the art of punching.",
+            "armor":0,
+            "damage":1,
+            "cost":100
+        },
+        "book_kick":
+        {
+            "name":"Punch Book",
+            "sprite":"images/items/book_kick.png",
+            "dimensions":[400,400],
+            "description":"A book about the art of kicking.",
+            "armor":0,
+            "damage":1,
+            "cost":100
+        },
+        "book_weapon":
+        {
+            "name":"Punch Book",
+            "sprite":"images/items/book_weapon.png",
+            "dimensions":[400,400],
+            "description":"A book about the art of weapons.",
+            "armor":0,
+            "damage":1,
+            "cost":100
+        },
+        "book_throw":
+        {
+            "name":"Punch Book",
+            "sprite":"images/items/book_throw.png",
+            "dimensions":[400,400],
+            "description":"A book about the art of throwing.",
+            "armor":0,
+            "damage":1,
+            "cost":100
         }
     },
     "weapon":
     {
-        "bat":
+        "item_bat":
         {
             "name":"Bat",
-            "sprite":"images/items/bat.png",
+            "sprite":"images/items/item_bat.png",
             "dimensions":[50,200],
             "description":"A wooden bat.",
             "armor":0,
             "damage":20,
             "cost":50
         },
-        "chain":
+        "item_chain":
         {
             "name":"Chain",
-            "sprite":"images/items/chain.png",
+            "sprite":"images/items/item_chain.png",
             "dimensions":[100,70],
             "description":"A medium length linked chain.",
             "armor":0,
             "damage":15,
             "cost":100
         },
-        "stick":
+        "item_stick":
         {
             "name":"Wooden Stick",
-            "sprite":"images/items/stick.png",
+            "sprite":"images/items/item_stick.png",
             "dimensions":[50,200],
             "description":"A wooden stick.",
             "armor":0,
@@ -57,40 +97,40 @@
     },
     "equipment":
     {
-        "helmet":
+        "item_helmet":
         {
             "name":"Baseball Helmet",
-            "sprite":"images/items/helmet.png",
+            "sprite":"images/items/item_helmet.png",
             "dimensions":[180,155],
             "description":"A standard baseball helmet.",
             "armor":10,
             "damage":0,
             "cost":50
         },
-        "t_shirt":
+        "item_t_shirt":
         {
             "name":"T-shirt",
-            "sprite":"images/items/t_shirt.png",
+            "sprite":"images/items/item_t_shirt.png",
             "dimensions":[180,155],
             "description":"A standard T-shirt.",
             "armor":5,
             "damage":0,
             "cost":15
         },
-        "pants":
+        "item_pants":
         {
             "name":"Jeans",
-            "sprite":"images/items/jeans.png",
+            "sprite":"images/items/item_jeans.png",
             "dimensions":[180,155],
             "description":"Standard blue jeans.",
             "armor":5,
             "damage":0,
             "cost":20
         },
-        "runners":
+        "item_runners":
         {
             "name":"Running Shoes",
-            "sprite":"images/items/runners.png",
+            "sprite":"images/items/item_runners.png",
             "dimensions":[180,155],
             "description":"Shoes that are designed for ultimate speed.",
             "armor":10,

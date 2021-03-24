@@ -1,7 +1,7 @@
 {
     "name":"Aname",
     "level":1,
-    "money":10,
+    "money":1000,
     "life":50,
     "life_max":50,
     "stamina":50,

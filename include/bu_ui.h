@@ -32,6 +32,21 @@ typedef struct
 	SDL_Color   black;
 }PlayerMenu;
 
+typedef struct
+{
+	Sprite  *equip_menu;
+	Sprite **equip_items;
+	int      equip_count;
+}EquipMenu;
+
+typedef struct
+{
+	Sprite    *text_box;
+	Sprite   **shop_text; 
+	TTF_Font  *shop_font;
+	SDL_Color  black;
+}ShopUI;
+
 void start_menu_init();
 
 void start_menu_free();
@@ -40,9 +55,9 @@ void ui_init();
 
 void hud_free();
 
-void start_menu_free();
-
 void ui_update();
+
+void shop_ui_init();
 
 void ui_draw(Vector2D);
 

@@ -126,7 +126,7 @@ void entity_free(Entity *ent)
 void entity_draw(Entity *ent)
 {
 	Vector2D drawPosition, offset;
-	Vector2D money_scale;
+	Vector2D money_scale, book_scale, item_scale;
 	if (!ent)
 	{
 		slog("cannot draw NULL entity");
@@ -155,6 +155,11 @@ void entity_draw(Entity *ent)
 		
 		money_scale.x = 0.1;
 		money_scale.y = 0.1;
+		book_scale.x = 0.2;
+		book_scale.y = 0.2;
+		item_scale.x = 0.4;
+		item_scale.y = 0.4;
+		
 		if (strstr(ent->name, "Money") != NULL)
 		{
 			gf2d_sprite_draw(
@@ -166,6 +171,36 @@ void entity_draw(Entity *ent)
 				NULL,
 				NULL,
 				(Uint32)ent->frame);
+			//ent->rect_collider.w *= money_scale.x;
+			//ent->rect_collider.h *= money_scale.y;
+		}
+		else if(strstr(ent->name, "book") != NULL)
+		{
+			gf2d_sprite_draw(
+				ent->sprite,
+				drawPosition,
+				&book_scale,
+				NULL,
+				NULL,
+				NULL,
+				NULL,
+				(Uint32)ent->frame);
+			//ent->rect_collider.w *= book_scale.x;
+			//ent->rect_collider.h *= book_scale.y;
+		}
+		else if (strstr(ent->name, "item") != NULL)
+		{
+			gf2d_sprite_draw(
+				ent->sprite,
+				drawPosition,
+				&item_scale,
+				NULL,
+				NULL,
+				NULL,
+				NULL,
+				(Uint32)ent->frame);
+			//ent->rect_collider.w *= item_scale.x;
+			//ent->rect_collider.h *= item_scale.y;
 		}
 		else
 		{
