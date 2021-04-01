@@ -23,6 +23,8 @@
             {"name":"prep_1",       "position":[900.00,300.00],   "type":3, "style":1},
             {"name":"prep_2",       "position":[1000.00,700.00],  "type":3, "style":1},
             {"name":"prep_3",       "position":[800.00,800.00],   "type":3, "style":1},
+            {"name":"nerd_1",       "position":[400.00,300.00],   "type":1, "style":3},
+            {"name":"nerd_2",       "position":[600.00,500.00],   "type":1, "style":3},
             {"name":"hall_exit",    "position":[10.00,10.00],     "dimension":[100.00,100.00], "location":"locker_room"},
             {"name":"school_exit",  "position":[1900.00,800.00],  "dimension":[100.00,100.00], "location":"front_lawn"}
         ]

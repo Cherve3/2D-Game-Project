@@ -6,6 +6,7 @@
 
 #include "gfc_types.h"
 
+#include "bu_money.h"
 #include "bu_npc.h"
 
 static NPC *npc = NULL;
@@ -62,18 +63,61 @@ void npc_free(NPC *self)
 	memset(&self->stats, 0, sizeof(NPCStats));
 }
 
+void npc_animation(Entity *self)
+{
+	NPC *npc;
+	if (!self) return;
+	npc = (NPC*)self->data;
+	//TODO: Replace with npc animations not player animations
+	if (npc->state.IDLE){
+		npc->ent->frameCount = 12;
+		npc->ent->sprite = gf2d_sprite_load_all("images/player/player_idle.png", 60, 80, 12);
+		npc->ent->rect_collider.w = 60;
+		npc->ent->rect_collider.h = 80;
+	}
+	if (npc->state.WALK){
+		npc->ent->frameCount = 12;
+		npc->ent->sprite = gf2d_sprite_load_all("images/player/player_walk.png", 60, 80, 12);
+		npc->ent->rect_collider.w = 60;
+		npc->ent->rect_collider.h = 80;
+	}
+	if (npc->state.RUN){
+		npc->ent->frameCount = 15;
+		npc->ent->sprite = gf2d_sprite_load_all("images/player/player_run.png", 78, 81, 15);
+		npc->ent->rect_collider.w = 78;
+		npc->ent->rect_collider.h = 81;
+	}
+	if (npc->state.ATTACK)
+	{
+		npc->ent->frameCount = 6;
+		npc->ent->sprite = gf2d_sprite_load_all("images/player/player_right_punch.png", 80, 80, 6);
+		npc->ent->rect_collider.w = 80;
+		npc->ent->rect_collider.h = 80;
+	}
+	/*
+	if (npc->state.ATTACK)
+	{
+		npc->ent->frameCount = 6;
+		npc->ent->sprite = gf2d_sprite_load_all("images/player/player_right_kick.png", 90, 80, 6);
+		npc->ent->rect_collider.w = 90;
+		npc->ent->rect_collider.h = 80;
+	}*/
+}
+
 void npc_update(Entity *self)
 {
 	NPC *npc;
+	int money;
 	if (!self) return;
 	//self->position.x += 2 * cos(30 * GFC_DEGTORAD) *.06;
 	//self->position.y -= 2 * sin(30 * GFC_DEGTORAD) *.05;
 	npc = (NPC*)self->data;
 	entity_collision_check(self);
-
+	money = npc->stats.money;
+	npc_animation(self);
 	if (npc->stats.life == 0)
 	{
-		spawn_money(npc->stats.money, self->position);
+		spawn_money(money, self->position);
 		entity_free(self);
 		npc_free(npc);
 		
@@ -120,14 +164,18 @@ void npc_spawn(NPCType type, FightStyle style, Vector2D position)
 	npc[npc_count].ent->position.y = position.y;
 	npc[npc_count].ent->rect_collider.x = position.x;
 	npc[npc_count].ent->rect_collider.y = position.y;
-	npc[npc_count].ent->rect_collider.w = 100;
-	npc[npc_count].ent->rect_collider.h = 100;
+	npc[npc_count].ent->rect_collider.w = 60;
+	npc[npc_count].ent->rect_collider.h = 80;
 	slog("NPC location: %f, %f", npc->ent->position.x, npc->ent->position.y);
 
 	npc[npc_count].fightStyle = style;
 	npc[npc_count].type = type;
 	generate_npc_stats(&npc[npc_count].stats, type, style);
 	npc[npc_count].isHostile = false;
+	npc[npc_count].state.ATTACK = false;
+	npc[npc_count].state.IDLE = true;
+	npc[npc_count].state.RUN = false;
+	npc[npc_count].state.WALK = false;
 
 	if (style != Friendly)
 		npc[npc_count].isHostile = true;

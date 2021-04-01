@@ -45,7 +45,18 @@ These are the common deliverables of all students and my personal deliverables f
 * combat mechanics (at least 3 basic attacks, +5 additional that can be unlocked)
 * 5 different enemies to fight (feel free to have endless repaints, with different stats)
 ### Common Final
-* TBA
+* Code compiles clean
+* Steady Frame Rate of animation
+* Audio Implementation
+* * Background music & Sound effects
+* Menu System - game can be completely navigated through the menu system
+* * From main menu to option screens, to in game menus and back
+* Research Component  - require approval some special feature of your game enhanced by applying as advanced algorithm (Special Hashes, finite state machines, machine learning, particle systems, physics system, etc)
+* Seamless level transitions, where applicable
+First few (based on approval) levels completed
+* All assets should “agree” with design / quality / fidelity
+* Content Editor (accessible through the menus) (approval)
+
 ### Individual Final
 * TBA
 ***

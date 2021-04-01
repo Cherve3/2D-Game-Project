@@ -32,26 +32,57 @@ void player_free()
 
 void check_player_bounds(Entity *self)
 {
-	if (self->rect_collider.x < camera_get_player_bounds().x)
-		camera_move(vector2d(-2 - self->velocity, 0));
+	if (self->rect_collider.x < camera_get_player_bounds().x){
+		camera_move(vector2d(-self->velocity, 0));
+		player->ent->rect_collider.x -= self->velocity;
+	}
 
 	if (self->rect_collider.x + self->rect_collider.w >(camera_get_player_bounds().x + camera_get_player_bounds().w))
 	{
-		camera_move(vector2d(2 + self->velocity, 0));
-		player->ent->rect_collider.x += 2 + self->velocity;
+		camera_move(vector2d(self->velocity, 0));
+		player->ent->rect_collider.x += self->velocity;
 	}
-	if (self->rect_collider.y < camera_get_player_bounds().y)
-		camera_move(vector2d(0, -2 - self->velocity));
+	if (self->rect_collider.y < camera_get_player_bounds().y){
+		camera_move(vector2d(0, -self->velocity));
+		player->ent->rect_collider.y -= self->velocity;
+	}
 
-	if (self->rect_collider.y + self->rect_collider.h > (camera_get_player_bounds().y + camera_get_player_bounds().h))
-		camera_move(vector2d(0, 2 + self->velocity));
+	if (self->rect_collider.y + self->rect_collider.h >(camera_get_player_bounds().y + camera_get_player_bounds().h)){
+		camera_move(vector2d(0, self->velocity));
+		player->ent->rect_collider.y += self->velocity;
+	}
 }
 
 void player_controls(Entity *self)
 {
 	Uint32 x, y;
-	Uint8 *keys = SDL_GetKeyboardState(NULL);
+	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	SDL_GetMouseState(&x, &y);
+
+	// Update states
+	if (!keys[SDL_SCANCODE_S] && !keys[SDL_SCANCODE_A] && !keys[SDL_SCANCODE_D] && !keys[SDL_SCANCODE_W] && !(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) && !(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)))
+	{
+		player->state.IDLE = true;
+		player->state.WALK = false;
+		player->state.RUN = false;
+	}
+	if (keys[SDL_SCANCODE_LSHIFT] && (keys[SDL_SCANCODE_A] || keys[SDL_SCANCODE_W] || keys[SDL_SCANCODE_S] || keys[SDL_SCANCODE_D]))
+	{
+		//slog("Running?");
+		if (player->stats.stamina > 0){
+			player->state.WALK = false;
+			player->state.RUN = true;
+			self->velocity = 2.1;
+		}
+	}
+	else if ((keys[SDL_SCANCODE_A] || keys[SDL_SCANCODE_W] || keys[SDL_SCANCODE_S] || keys[SDL_SCANCODE_D]))
+	{
+		player->state.RUN = false;
+		self->velocity = 1.0;
+	}
+	else
+		self->velocity = 0.0;
+
 
 	// Controls
 	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
@@ -105,10 +136,10 @@ void player_controls(Entity *self)
 		player->state.IDLE = false;
 		//slog("Moving left?");
 		if (player->state.RUN)
-			vector2d_add(self->position, self->position, vector2d(2 + self->velocity, 0));
+			vector2d_add(self->position, self->position, vector2d(self->velocity, 0));
 		else
 		{
-			vector2d_add(self->position, self->position, vector2d(2, 0));
+			vector2d_add(self->position, self->position, vector2d(self->velocity, 0));
 			player->state.WALK = true;
 		}
 	}
@@ -117,10 +148,10 @@ void player_controls(Entity *self)
 		player->state.IDLE = false;
 		//slog("Moving right?");
 		if (player->state.RUN)
-			vector2d_add(self->position, self->position, vector2d(-2 - self->velocity, 0));
+			vector2d_add(self->position, self->position, vector2d(-self->velocity, 0));
 		else
 		{
-			vector2d_add(self->position, self->position, vector2d(-2, 0));
+			vector2d_add(self->position, self->position, vector2d(-self->velocity, 0));
 			player->state.WALK = true;
 		}
 	}
@@ -129,10 +160,10 @@ void player_controls(Entity *self)
 		player->state.IDLE = false;
 		//slog("Moving up?");
 		if (player->state.RUN)
-			vector2d_add(self->position, self->position, vector2d(0, -2 - self->velocity));
+			vector2d_add(self->position, self->position, vector2d(0, -self->velocity));
 		else
 		{
-			vector2d_add(self->position, self->position, vector2d(0, -2));
+			vector2d_add(self->position, self->position, vector2d(0, -self->velocity));
 			player->state.WALK = true;
 		}
 	}
@@ -141,10 +172,10 @@ void player_controls(Entity *self)
 		player->state.IDLE = false;
 		//slog("Moving down?");
 		if (player->state.RUN)
-			vector2d_add(self->position, self->position, vector2d(0, 2 + self->velocity));
+			vector2d_add(self->position, self->position, vector2d(0, self->velocity));
 		else
 		{
-			vector2d_add(self->position, self->position, vector2d(0, 2));
+			vector2d_add(self->position, self->position, vector2d(0, self->velocity));
 			player->state.WALK = true;
 		}
 	}
@@ -168,25 +199,41 @@ void player_controls(Entity *self)
 			player->stats.toggle_inventory = false;
 		player_time = get_current_time();
 	}
+}
 
-	// Update states
-	if (!keys[SDL_SCANCODE_S] && !keys[SDL_SCANCODE_A] && !keys[SDL_SCANCODE_D] && !keys[SDL_SCANCODE_W] && !(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) && !(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)))
-	{
-		player->state.IDLE = true;
-		player->state.WALK = false;
-		player->state.RUN = false;
+void player_animation()
+{
+	if (player->state.IDLE){
+		player->ent->frameCount = 12;
+		player->ent->sprite = gf2d_sprite_load_all("images/player/player_idle.png",60,80,12);
+		player->ent->rect_collider.w = 60;
+		player->ent->rect_collider.h = 80;
 	}
-	if (keys[SDL_SCANCODE_LSHIFT] && (keys[SDL_SCANCODE_A] || keys[SDL_SCANCODE_W] || keys[SDL_SCANCODE_S] || keys[SDL_SCANCODE_D]))
-	{
-		//slog("Running?");
-		player->state.WALK = false;
-		player->state.RUN = true;
-		self->velocity = 2.0;
+	if (player->state.WALK){
+		player->ent->frameCount = 12;
+		player->ent->sprite = gf2d_sprite_load_all("images/player/player_walk.png", 60, 80, 12);
+		player->ent->rect_collider.w = 60;
+		player->ent->rect_collider.h = 80;
 	}
-	else
+	if (player->state.RUN){
+		player->ent->frameCount = 15;
+		player->ent->sprite = gf2d_sprite_load_all("images/player/player_run.png", 78, 81, 15);
+		player->ent->rect_collider.w = 78;
+		player->ent->rect_collider.h = 81;
+	}
+	if (player->state.ATTACK && (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
 	{
-		player->state.RUN = false;
-		self->velocity = 0.0;
+		player->ent->frameCount = 6;
+		player->ent->sprite = gf2d_sprite_load_all("images/player/player_right_punch.png", 80, 80, 6);
+		player->ent->rect_collider.w = 80;
+		player->ent->rect_collider.h = 80;
+	}
+	if (player->state.ATTACK && (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)))
+	{
+		player->ent->frameCount = 6;
+		player->ent->sprite = gf2d_sprite_load_all("images/player/player_right_kick.png", 90, 80, 6);
+		player->ent->rect_collider.w = 90;
+		player->ent->rect_collider.h = 80;
 	}
 }
 
@@ -204,7 +251,7 @@ void player_think(Entity* self)
 		spawn_money(player->stats.money, self->position);
 		player->stats.money = 0;
 	}
-		
+
 }
 
 void player_update(Entity *self)
@@ -256,7 +303,7 @@ void player_update(Entity *self)
 	//slog("WALK:   %i", player->state.WALK);
 	//slog("IDLE:   %i", player->state.IDLE);
 	//slog("ATTACK: %i", player->state.ATTACK);
-
+	player_animation();
 }
 
 void resolve_collision(Entity *self, Entity *other)
@@ -414,11 +461,11 @@ Player *player_spawn(Vector2D position)
 			return NULL;
 		}
 		player->ent->name = "Player 1";
-		player->ent->sprite = gf2d_sprite_load_all("images/ed210_top.png", 128, 128, 16);
+		player->ent->sprite = gf2d_sprite_load_all("images/player/player_idle_2.png", 60, 80, 33);
 		vector2d_copy(player->ent->position, position);
-		player->ent->frameRate = 0.1;
-		player->ent->frameCount = 16;
 		slog("position player: %f, %f", position.x, position.y);
+		player->ent->frameRate       = 0.1;
+		player->ent->frameCount      = 33;
 		player->ent->rect_collider.x = position.x;
 		player->ent->rect_collider.y = position.y;
 		player->ent->rect_collider.w = 100;
@@ -440,7 +487,7 @@ Player *player_spawn(Vector2D position)
 		player_time = SDL_GetTicks();
 	}
 	else
-		slog("Warning: There are already two players active"); return;
+		slog("Warning: There are already two players active"); return NULL;
 
 	return player;
 }

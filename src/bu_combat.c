@@ -19,11 +19,18 @@ void draw_attack(Rect attack);
 void punch(Player *player)
 {
 	Attack punch;
+	/*
 	punch.collider.x = player->ent->position.x + player->ent->rect_collider.w + camera_get_offset().x +camera_get_position().x;
 	punch.collider.y = player->ent->position.y + 10 + +camera_get_offset().y + camera_get_position().y;
 	punch.collider.h = 50;
 	punch.collider.w = 50;
-	
+	*/
+
+	punch.collider.x = player->ent->position.x;
+	punch.collider.y = player->ent->position.y;
+	punch.collider.w = player->ent->rect_collider.w;
+	punch.collider.h = player->ent->rect_collider.h;
+
 	punch.damage = 1 + (player->stats.punch * player->stats.strength) * 0.5;
 	punch.duration = 1.0;
 
@@ -43,7 +50,7 @@ void kick(Player *player)
 	kick.collider.h = 50;
 	kick.collider.w = 50;
 
-	kick.damage = 1 + (player->stats.kick * player->stats.strength) * 0.5;
+	kick.damage = 2 + (player->stats.kick * player->stats.strength) * 0.5;
 	kick.duration = 1.0;
 
 	draw_attack(kick.collider);

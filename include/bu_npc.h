@@ -46,10 +46,19 @@ typedef struct{
 
 typedef struct
 {
+	Bool IDLE;
+	Bool WALK;
+	Bool RUN;
+	Bool ATTACK;
+}NPCState;
+
+typedef struct
+{
 	NPCType type;
 	FightStyle fightStyle;
 	Entity *ent;
 	NPCStats stats;
+	NPCState state;
 	Bool isHostile;
 	Item weapon;
 }NPC;
