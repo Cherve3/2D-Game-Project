@@ -33,22 +33,22 @@ void player_free()
 void check_player_bounds(Entity *self)
 {
 	if (self->rect_collider.x < camera_get_player_bounds().x){
-		camera_move(vector2d(-self->velocity, 0));
+		camera_move(vector2d(-2 - self->velocity, 0));
 		player->ent->rect_collider.x -= self->velocity;
 	}
 
 	if (self->rect_collider.x + self->rect_collider.w >(camera_get_player_bounds().x + camera_get_player_bounds().w))
 	{
-		camera_move(vector2d(self->velocity, 0));
+		camera_move(vector2d(2 + self->velocity, 0));
 		player->ent->rect_collider.x += self->velocity;
 	}
 	if (self->rect_collider.y < camera_get_player_bounds().y){
-		camera_move(vector2d(0, -self->velocity));
+		camera_move(vector2d(0, -2 - self->velocity));
 		player->ent->rect_collider.y -= self->velocity;
 	}
 
 	if (self->rect_collider.y + self->rect_collider.h >(camera_get_player_bounds().y + camera_get_player_bounds().h)){
-		camera_move(vector2d(0, self->velocity));
+		camera_move(vector2d(0, 2 + self->velocity));
 		player->ent->rect_collider.y += self->velocity;
 	}
 }

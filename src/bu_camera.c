@@ -57,6 +57,7 @@ void camera_set_position(Vector2D position)
 
 void camera_move(Vector2D move)
 {
+	
 	camera.view.x += move.x;
 	camera.view.y += move.y;
 
@@ -78,6 +79,7 @@ void camera_move(Vector2D move)
 	{
 		if (camera.view.x < get_level_dimension().x)
 		{
+			slog("Camera moving x");
 			camera.view.x = camera.bounds.x - camera.view.w;
 			camera.playerBounds.x -= move.x;
 		}
@@ -86,6 +88,7 @@ void camera_move(Vector2D move)
 	{
 		if (camera.view.y < get_level_dimension().y)
 		{
+			slog("Camera moving y");
 			camera.view.y = camera.bounds.y - camera.view.h;
 			camera.playerBounds.y -= move.y;
 		}

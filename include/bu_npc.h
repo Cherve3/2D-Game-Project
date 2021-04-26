@@ -29,6 +29,7 @@ typedef struct{
 	int money;
 
 	int life;
+	int life_max;
 	int stamina;
 	int stamina_max;
 	int stamina_regen;
@@ -61,6 +62,9 @@ typedef struct
 	NPCState state;
 	Bool isHostile;
 	Item weapon;
+	Sprite *name;
+	Sprite *health;
+	Sprite *base;
 }NPC;
 
 /**

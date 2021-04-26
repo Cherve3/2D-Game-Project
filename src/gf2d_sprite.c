@@ -130,6 +130,7 @@ Sprite *gf2d_sprite_load_all(
     if (sprite != NULL)
     {
         // found a copy already in memory
+		//slog("Found a copy of %s already in memory", filename);
         sprite->ref_count++;
         return sprite;
     }
@@ -200,11 +201,15 @@ Sprite *gf2d_text_sprite_load(
 	if (sprite != NULL)
 	{
 		// found a copy already in memory
-		sprite->ref_count++;
-		return sprite;
+		if (strstr(filename, "text") == NULL){
+			slog("Filename: %s", filename);
+			sprite->ref_count++;
+			return sprite;
+		}
 	}
-
-	sprite = gf2d_sprite_new();
+	else
+		sprite = gf2d_sprite_new();
+	
 	if (!sprite)
 	{
 		return NULL;

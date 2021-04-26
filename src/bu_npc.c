@@ -6,6 +6,8 @@
 
 #include "gfc_types.h"
 
+#include "gf2d_sprite.h"
+
 #include "bu_money.h"
 #include "bu_npc.h"
 
@@ -168,14 +170,17 @@ void npc_spawn(NPCType type, FightStyle style, Vector2D position)
 	npc[npc_count].ent->rect_collider.h = 80;
 	slog("NPC location: %f, %f", npc->ent->position.x, npc->ent->position.y);
 
-	npc[npc_count].fightStyle = style;
-	npc[npc_count].type = type;
+	npc[npc_count].fightStyle	= style;
+	npc[npc_count].type			= type;
 	generate_npc_stats(&npc[npc_count].stats, type, style);
-	npc[npc_count].isHostile = false;
+	npc[npc_count].isHostile	= false;
 	npc[npc_count].state.ATTACK = false;
-	npc[npc_count].state.IDLE = true;
-	npc[npc_count].state.RUN = false;
-	npc[npc_count].state.WALK = false;
+	npc[npc_count].state.IDLE	= true;
+	npc[npc_count].state.RUN	= false;
+	npc[npc_count].state.WALK	= false;
+	
+	npc[npc_count].base		= gf2d_sprite_load_image("images/ui/base_bar_npc.png");
+	npc[npc_count].health	= gf2d_sprite_load_image("images/ui/health_bar.png");
 
 	if (style != Friendly)
 		npc[npc_count].isHostile = true;
@@ -238,6 +243,7 @@ void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style)
 	sj_get_integer_value(sj_object_get_value(npc_stats, "level"),			&stats->level);
 	sj_get_integer_value(sj_object_get_value(npc_stats, "money"),			&stats->money);
 	sj_get_integer_value(sj_object_get_value(npc_stats, "life"),			&stats->life);
+	sj_get_integer_value(sj_object_get_value(npc_stats, "life_max"),		&stats->life_max);
 	sj_get_integer_value(sj_object_get_value(npc_stats, "stamina"),			&stats->stamina);
 	sj_get_integer_value(sj_object_get_value(npc_stats, "stamina_max"),		&stats->stamina_max);
 	sj_get_integer_value(sj_object_get_value(npc_stats, "stamina_regen"),	&stats->stamina_regen);
@@ -297,6 +303,11 @@ void print_npc_stats(Uint32 num)
 NPC *get_npc()
 {
 	return npc;
+}
+
+Uint32 get_npc_count()
+{
+	return npc_count;
 }
 
 void print_npc()

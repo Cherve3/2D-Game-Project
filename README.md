@@ -51,14 +51,16 @@ These are the common deliverables of all students and my personal deliverables f
 * * Background music & Sound effects
 * Menu System - game can be completely navigated through the menu system
 * * From main menu to option screens, to in game menus and back
-* Research Component  - require approval some special feature of your game enhanced by applying as advanced algorithm (Special Hashes, finite state machines, machine learning, particle systems, physics system, etc)
+* Research Component  - finite state machine
 * Seamless level transitions, where applicable
 First few (based on approval) levels completed
 * All assets should “agree” with design / quality / fidelity
-* Content Editor (accessible through the menus) (approval)
+* Level Editor
 
 ### Individual Final
-* TBA
+* Collision with World Elements
+* Background Hazards (x3)
+* status bars above characters
 ***
 
 # gameframework2d (GF2D)

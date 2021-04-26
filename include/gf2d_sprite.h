@@ -83,7 +83,13 @@ void gf2d_sprite_free(Sprite *sprite);
  */
 void gf2d_sprite_clear_all();
 
-
+Sprite *gf2d_text_sprite_load(
+	char *filename,
+	SDL_Surface *surface,
+	Sint32 frameWidth,
+	Sint32 frameHeight,
+	Sint32 framesPerLine
+	);
 
 
 #endif
