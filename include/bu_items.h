@@ -1,6 +1,8 @@
 #ifndef __BU_ITEMS_H__
 #define __BU_ITEMS_H__
 
+#include "chipmunk/chipmunk.h"
+
 #include "bu_entity.h"
 
 typedef enum
@@ -31,7 +33,7 @@ void item_drop();
 
 void item_free();
 
-void item_new(TextWord *item_name, ItemType type, Vector2D position);
+void item_new(TextWord *item_name, ItemType type, cpVect position);
 
 void item_manager_init(Uint32 maxItems);
 

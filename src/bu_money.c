@@ -34,10 +34,10 @@ void money_think(Entity *self)
 	entity_collision_check(self);
 }
 
-void spawn_money(int value, Vector2D position)
+void spawn_money(int value, cpVect position)
 {
 	Entity *ent;
-	Money *money;
+	Money *money = gfc_allocate_array(sizeof(Money),1);
 	ent = entity_new();
 	if (!money) return;
 	money->value = value;

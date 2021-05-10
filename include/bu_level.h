@@ -1,6 +1,8 @@
 #ifndef __BU_LEVEL_H__
 #define __BU_LEVEL_H__
 
+#include "chipmunk/chipmunk.h"
+
 #include "gf2d_sprite.h"
 #include "bu_entity.h"
 
@@ -11,9 +13,15 @@ typedef struct
 	Sprite		*background;
 	float		 width;
 	float		 height;
-	Vector2D	 position;
+	cpVect	     position;
+	cpSpace		*space;
+	cpShape		*border_top;
+	cpShape		*border_bottom;
+	cpShape		*border_left;
+	cpShape		*border_right;
 	Sprite		*sprite;
 	Entity		*spawn_list;
+
 }Level;
 
 void level_free();

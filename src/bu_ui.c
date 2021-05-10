@@ -76,7 +76,7 @@ Sprite *create_ui_text(TextLine filename, TTF_Font *font, TextLine text, SDL_Col
 void stat_menu_init()
 {
 	TextLine text;
-
+	
 	snprintf(text, sizeof(TextLine), "Name:             %s", get_player()->stats.name);
 	if (!ui->player_menu.stat_text[0] || strcmp(ui->player_menu.stat_text[0], text) != 0)
 	{
@@ -97,8 +97,6 @@ void stat_menu_init()
 		ui->player_menu.text_sprite[2] = create_ui_text("money_text", ui->player_menu.player_font, text, ui->player_menu.black, NULL);
 	}
 	snprintf(text, sizeof(TextLine), "Life:                %i /%i", get_player()->stats.life, get_player()->stats.life_max);
-	int cmp = strcmp(ui->player_menu.stat_text[3], text);
-	
 
 	if (!ui->player_menu.stat_text[3] || strcmp(ui->player_menu.stat_text[3], &text) != 0)
 	{

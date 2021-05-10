@@ -284,7 +284,7 @@ void item_create(TextWord *item_name, ItemType type, Item *item)
 	//slog("dimensions: %f, %f", item->ent->rect_collider.x, item->ent->rect_collider.y);
 }
 
-void item_new(TextWord *item_name, ItemType type, Vector2D position)
+void item_new(TextWord *item_name, ItemType type, cpVect position)
 {
 	int i;
 	if (items.item_list == NULL)

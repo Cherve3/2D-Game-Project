@@ -1,6 +1,8 @@
 #ifndef __BU_PLAYER_H__
 #define __BU_PLAYER_H__
 
+#include "chipmunk/chipmunk.h"
+
 #include "bu_entity.h"
 #include "bu_items.h"
 
@@ -69,7 +71,7 @@ typedef struct
  * @brief Spawns a player.
  * @param position The x and y posiiton of the player on the screen.
  */
-Player *player_spawn(Vector2D position);
+void *player_spawn(cpSpace *space, cpVect position);
 
 /**
 * @brief Update the player.

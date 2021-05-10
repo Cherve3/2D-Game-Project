@@ -1,6 +1,8 @@
 #ifndef __BU_NPC_H__
 #define __BU_NPC_H__
 
+#include "chipmunk/chipmunk.h"
+
 #include "bu_entity.h"
 #include "bu_items.h"
 
@@ -79,7 +81,7 @@ void npc_update(Entity *self);
  * @param position The initial position of the npc entity
  * @return A pointer to the npc entity
  */
-void npc_spawn(NPCType type, FightStyle style, Vector2D position);
+void npc_spawn(NPCType type, FightStyle style, cpSpace* space, cpVect position);
 
 /**
 * @brief Frees all the npc data

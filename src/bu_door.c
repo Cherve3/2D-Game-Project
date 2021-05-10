@@ -26,19 +26,19 @@ void door_think(Entity *self)
 	entity_collision_check(self);
 }
 
-void door_spawn(Vector2D position, Vector2D dimension, TextWord **args)
+void door_spawn(cpVect position, Vector2D dimension, TextWord **args)
 {
-	Entity *door;
+	Entity *door = NULL;
 	TextLine *name;
 	
 	door = entity_new();
 	if (!door) return NULL;
 	slog("name: %s and location: %s", args[0], args[1]);
 	door->name = args[0];
-	door->sprite = gf2d_sprite_load_all("images/door.png", 128, 128, 16);
 	door->_inuse = 1;
 	door->position.x = position.x;
 	door->position.y = position.y;
+	door->sprite = "images/door.png";
 	door->rect_collider.x = position.x;
 	door->rect_collider.y = position.y;
 	door->rect_collider.w = dimension.x;

@@ -1,6 +1,8 @@
 
 #include <math.h>
 
+#include "chipmunk/chipmunk_private.h"
+
 #include "simple_json.h"
 #include "simple_logger.h"
 
@@ -137,9 +139,10 @@ void clear_npcs()
 	npc_count = 0;
 }
 
-void npc_spawn(NPCType type, FightStyle style, Vector2D position)
+void npc_spawn(NPCType type, FightStyle style, cpSpace* space, cpVect position)
 {	
 	char ent_name[16];
+	cpShape *shape;
 	slog("Spawning NPC...");
 	if (!npc)
 		npc = (NPC*)gfc_allocate_array(sizeof(NPC), 10);
@@ -168,7 +171,10 @@ void npc_spawn(NPCType type, FightStyle style, Vector2D position)
 	npc[npc_count].ent->rect_collider.y = position.y;
 	npc[npc_count].ent->rect_collider.w = 60;
 	npc[npc_count].ent->rect_collider.h = 80;
-	slog("NPC location: %f, %f", npc->ent->position.x, npc->ent->position.y);
+	npc[npc_count].ent->body = cpBodyNew(1.0, INFINITY);
+	cpSpaceAddBody(space, npc[npc_count].ent->body);
+	cpBodySetPosition(npc[npc_count].ent->body, npc[npc_count].ent->position);
+	slog("NPC location: %f, %f", npc[npc_count].ent->position.x, npc[npc_count].ent->position.y);
 
 	npc[npc_count].fightStyle	= style;
 	npc[npc_count].type			= type;
@@ -185,6 +191,10 @@ void npc_spawn(NPCType type, FightStyle style, Vector2D position)
 	if (style != Friendly)
 		npc[npc_count].isHostile = true;
 	
+	shape = cpBoxShapeNew2(npc[npc_count].ent->body, cpBBNew(-0.1, -1.0, 50.0, 70.0), 0.2);
+	cpSpaceAddShape(space, shape);
+	npc[npc_count].ent->shape = shape;
+
 	npc_count++;
 }
 

@@ -1,8 +1,11 @@
 #include "simple_logger.h"
 
+#include "gf2d_draw.h"
+
 #include "bu_collision.h"
 #include "bu_camera.h"
 #include "bu_entity.h"
+
 
 typedef struct
 {
@@ -127,6 +130,17 @@ void entity_draw(Entity *ent)
 {
 	Vector2D drawPosition, offset;
 	Vector2D money_scale, book_scale, item_scale;
+	Vector4D vec;
+	int debug = 1;
+
+	drawPosition.x = 0; 
+	drawPosition.y = 0;
+	//color black
+	vec.w = 255;
+	vec.x = 0;
+	vec.y = 0;
+	vec.z = 0;
+
 	if (!ent)
 	{
 		slog("cannot draw NULL entity");
@@ -149,8 +163,21 @@ void entity_draw(Entity *ent)
 			slog("Entity %s not on screen", ent->sprite->filepath);
 			return;
 		}*/
-		drawPosition.x = ent->position.x + offset.x;
-		drawPosition.y = ent->position.y + offset.y;
+		if (ent->body) 
+		{
+			drawPosition.x = cpBodyGetPosition(ent->body).x + offset.x;
+			drawPosition.y = cpBodyGetPosition(ent->body).y + offset.y;
+		}
+		if (debug) 
+		{
+			gf2d_draw_rect(gfc_sdl_rect(
+				drawPosition.x,
+				drawPosition.y,
+				ent->rect_collider.w,
+				ent->rect_collider.w),
+				vec);
+		}
+
 		//slog("Position: %f,%f", drawPosition.x, drawPosition.y);
 		
 		money_scale.x = 0.1;
@@ -210,7 +237,7 @@ void entity_draw(Entity *ent)
 				NULL,
 				NULL,
 				NULL,
-				NULL,
+				&ent->flip,
 				NULL,
 				(Uint32)ent->frame);
 		}

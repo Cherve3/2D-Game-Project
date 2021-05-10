@@ -1,23 +1,45 @@
 #ifndef __ENTITY_H__
 #define __ENTITY_H__
 
+#include "chipmunk/chipmunk.h"
+
 #include "gfc_types.h"
 
+#include "gfc_audio.h"
 #include "gf2d_sprite.h"
 
 #include "bu_shapes.h"
+
+#define EntitySoundMax 8
 
 typedef struct Entity_s
 {
 	Bool		_inuse;
 	TextWord   *name;
-	Vector2D	position;
-	float       velocity;
+
+	/*physics*/
+	cpVect		position;
+	cpVect      velocity;
+	cpShape	   *shape;
+	cpBody     *body;
+	Vector2D	acceleration;
 	Rect        rect_collider;
 	Sprite	   *sprite;
 	float		frame;
 	float		frameCount;
 	float		frameRate;
+
+	/*sound*/
+	Sound* sound[EntitySoundMax];
+
+	/*graphics*/
+	Vector2D scale;                         /**<scale to draw sprite at*/
+	Vector2D scaleCenter;                   /**<where to scale sprite from*/
+	Vector3D rotation;                      /**<how to rotate the sprite*/
+	Vector2D flip;                          /**<if to flip the sprite*/
+	Vector2D facing;                        /**<direction the entity is facing*/
+
+
 	void	  (*update)(struct Entity_s *self);
 	void	  (*think)(struct Entity_s *self);
 	void	  (*onTouch)(struct Entity_s *self, struct Entity_s *other);
