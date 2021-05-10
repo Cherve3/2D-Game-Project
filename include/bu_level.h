@@ -11,6 +11,7 @@ typedef struct
 	//Uint8   _inuse;
 	char		*name;
 	Sprite		*background;
+	char        *audio;
 	float		 width;
 	float		 height;
 	cpVect	     position;

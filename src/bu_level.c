@@ -6,6 +6,7 @@
 
 #include "gf2d_config.h"
 #include "gf2d_draw.h"
+#include "gfc_audio.h"
 
 #include "bu_camera.h"
 #include "bu_level.h"
@@ -33,6 +34,8 @@ void level_free()
 	//sj_free(spawn_list);
 	//sj_free(level_json);
 	
+	cpSpaceFree(level->space);
+
 	memset(level, 0, sizeof(Level));
 	slog("Level freed");
 }
@@ -59,11 +62,12 @@ void level_init()
 	level->space = cpSpaceNew();
 	gravity = cpv(0, 50);
 	//cpSpaceSetGravity(level->space, gravity);
-	//cpSpaceSetIterations(level->space, 10);
+	cpSpaceSetIterations(level->space, 10);
 	cpSpaceSetCollisionSlop(level->space, 0.1);
 	cpSpaceUseSpatialHash(level->space, 200.0, 10);
 	staticBody = cpSpaceGetStaticBody(level->space);
-
+	
+	/*
 	// Horizontal ceiling
 	staticBody = cpSpaceGetStaticBody(level->space);
 	ground = cpSegmentShapeNew(staticBody, cpv(0.0, 10), cpv(1920.0, 10.0), 0);
@@ -81,7 +85,7 @@ void level_init()
 	ground = cpSegmentShapeNew(staticBody, cpv(650.0, 0.0), cpv(650.0, 1080.0), 0);
 	cpShapeSetFriction(ground, 1.0);
 	cpSpaceAddShape(level->space, ground);
-
+	*/
 
 	level->border_top = cpSegmentShapeNew(staticBody, cpv(0, 0), cpv(1920, 0), 0);
 	cpShapeSetFriction(level->border_top, 1);
@@ -205,14 +209,16 @@ void level_load(char *name)
 	SJson *item;
 	SJson *player_info;
 	cpVect position;
+	Sound* audio;
 	position.x = 0;
 	position.y = 0;
 	if (spawn_list)
 		spawn_list = NULL;
+	
 	spawn_list = sj_object_get_value(level_info, "spawn_list");
 	if (!spawn_list)
 		slog("Spawn list does not exist.");
-
+	gfc_sound_clear_all();
 	slog("Loading level %s", name);
 
 	if (!level_info)
@@ -220,10 +226,11 @@ void level_load(char *name)
 
 	level->name = name;
 	level->background = gf2d_sprite_load_image( sj_get_string_value(sj_object_get_value(level_info, "background")) );
-
 	if (!level->background)
 		slog("Could not find background image");
-
+	level->audio = sj_get_string_value(sj_object_get_value(level_info, "audio_file"));
+	audio = gfc_sound_load(level->audio, 1, 0);
+	gfc_sound_play(audio, -1, 0.05, -1, -1);
 	level->position.x = 0;
 	level->position.y = 0;
 
@@ -273,10 +280,6 @@ void level_draw()
 	end.x = 650.0 + camera_get_offset().x;
 	end.y = 1080.0 + camera_get_offset().y;
 	gf2d_draw_line(start, end, vector4d(255, 255, 255, 255));
-	//printf(
-	//	"LEVEL ballBody is at (%5.2f, %5.2f). It's velocity is (%5.2f, %5.2f)\n",
-	//	pos.x, pos.y, vel.x, vel.y
-	//);
 }
 
 Level *get_level()

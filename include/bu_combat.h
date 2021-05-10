@@ -7,6 +7,8 @@
 #include "bu_player.h"
 #include "bu_npc.h"
 
+void attack_list_init();
+
 void punch(Player *player);
 
 void kick(Player *player);

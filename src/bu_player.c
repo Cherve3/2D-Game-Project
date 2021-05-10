@@ -4,6 +4,8 @@
 #include "simple_json.h"
 #include "simple_logger.h"
 
+#include "gfc_audio.h"
+
 #include "bu_timer.h"
 #include "bu_camera.h"
 #include "bu_player.h"
@@ -78,29 +80,30 @@ void player_controls(Entity *self)
 			if(keys[SDL_SCANCODE_A])
 				self->velocity.x = -200.1;
 			if (keys[SDL_SCANCODE_S])
-				self->velocity.y = -200.1;
+				self->velocity.y = 200.1;
 			if (keys[SDL_SCANCODE_D])
 				self->velocity.x = 200.1;
-			if (keys[SDL_SCANCODE_F])
-				self->velocity.y = 200.1;
+			if (keys[SDL_SCANCODE_W])
+				self->velocity.y = -200.1;
 		}
 	}
 	else if ((keys[SDL_SCANCODE_A] || keys[SDL_SCANCODE_W] || keys[SDL_SCANCODE_S] || keys[SDL_SCANCODE_D]))
 	{
 		player->state.RUN = false;
+		player->state.WALK = true; 
 		if (keys[SDL_SCANCODE_A])
 			self->velocity.x = -100.0;
 		if (keys[SDL_SCANCODE_S])
-			self->velocity.y = -100.0;
+			self->velocity.y = 100.0;
 		if (keys[SDL_SCANCODE_D])
 			self->velocity.x = 100.0;
-		if (keys[SDL_SCANCODE_F])
-			self->velocity.y = 100.0;
+		if (keys[SDL_SCANCODE_W])
+			self->velocity.y = -100.0;
 	}
-	else
-		self->velocity.x = 0.0; self->velocity.y = 0.0;
-
-
+	else {
+		self->velocity.x = 0.0;
+		self->velocity.y = 0.0;
+	}
 	// Controls
 	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
 	{
@@ -114,7 +117,6 @@ void player_controls(Entity *self)
 
 			player_time = get_current_time();
 		}
-		//slog("Left mouse button");
 	}
 	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT))
 	{
@@ -128,7 +130,6 @@ void player_controls(Entity *self)
 
 			player_time = get_current_time();
 		}
-		//slog("Right mouse button");
 	}
 
 	if ( !(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT) ) && !(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)) )
@@ -153,7 +154,6 @@ void player_controls(Entity *self)
 		player->ent->flip.x = 0;
 		player->ent->flip.y = 0;
 		player->state.IDLE = false;
-		//slog("Moving left?");
 		player->state.WALK = true;
 		if (player->state.RUN)
 			player->state.WALK = false;
@@ -163,7 +163,6 @@ void player_controls(Entity *self)
 		player->ent->flip.x = 1;
 		player->ent->flip.y = 0;
 		player->state.IDLE = false;
-		//slog("Moving right?");
 		player->state.WALK = true;
 		if (player->state.RUN)
 			player->state.WALK = false;
@@ -171,7 +170,6 @@ void player_controls(Entity *self)
 	if (keys[SDL_SCANCODE_W])
 	{
 		player->state.IDLE = false;
-		//slog("Moving up?");
 		player->state.WALK = true;
 		if (player->state.RUN)
 			player->state.WALK = false;
@@ -179,7 +177,6 @@ void player_controls(Entity *self)
 	if (keys[SDL_SCANCODE_S])
 	{
 		player->state.IDLE = false;
-		//slog("Moving down?");
 		player->state.WALK = true;
 		if (player->state.RUN)
 			player->state.WALK = false;
@@ -204,7 +201,6 @@ void player_controls(Entity *self)
 			player->stats.toggle_inventory = false;
 		player_time = get_current_time();
 	}
-
 	cpBodySetVelocity(self->body, self->velocity);
 }
 
@@ -278,8 +274,8 @@ void player_update(Entity *self)
 		self->position.y = get_level_dimension().y - self->rect_collider.h;
 	self->rect_collider.x = self->position.x;
 	self->rect_collider.y = self->position.y;
-	slog("Player position: %f,%f", player->ent->position.x, player->ent->position.y);
-	slog("body position: %f,%f",cpBodyGetPosition(player->ent->body).x, cpBodyGetPosition(player->ent->body).y);
+	//slog("Player position: %f,%f", player->ent->position.x, player->ent->position.y);
+	//slog("body position: %f,%f",cpBodyGetPosition(player->ent->body).x, cpBodyGetPosition(player->ent->body).y);
 	//cpBodySetPosition(player->ent->body, player->ent->position);
 
 	// Health

@@ -10,6 +10,7 @@
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 #include "gf2d_draw.h"
+#include "gfc_audio.h"
 
 #include "bu_timer.h"
 #include "bu_camera.h"
@@ -53,6 +54,9 @@ int main(int argc, char * argv[])
 	SDL_Rect quit_rect;
 	SDL_Rect load_rect;
 
+	//Sound menu
+	Sound *menu_music = NULL;
+
 	//Item bat vector
 	cpVect cp_vec;
 
@@ -72,7 +76,7 @@ int main(int argc, char * argv[])
         vector4d(0,0,0,255),
         0);
     gf2d_graphics_set_frame_delay(16);
-
+	gfc_audio_init(100, 4,1,10,1,0);
 	//color black
 	vec.w = 255;
 	vec.x = 255;
@@ -102,7 +106,10 @@ int main(int argc, char * argv[])
 	quit_rect.x = resolution.x / 3.3;// 250
 	quit_rect.y = resolution.y / 1.35;//350
 
+	menu_music = gfc_sound_load("audio/507747__magmi-soundtracks__hybrid-action-music-01.wav", 1, 0);
+	gfc_sound_play(menu_music, -1, 0.3, -1, -1);
 	slog("Main Menu loaded");
+	
 	while (!start)
 	{
 		SDL_RenderPresent(gf2d_graphics_get_renderer());
@@ -143,7 +150,7 @@ int main(int argc, char * argv[])
 					{
 						slog("Pressed Start button");
 						start = 1;
-
+						gfc_sound_clear_all();
 					}
 
 					if ((x > editor_rect.x) && (x < editor_rect.x + editor_rect.w) &&
@@ -151,13 +158,14 @@ int main(int argc, char * argv[])
 					{
 						slog("Pressed Editor button");
 						start = -1;
-
+						gfc_sound_clear_all();
 					}
 
 					if ((x > quit_rect.x) && (x < quit_rect.x + quit_rect.w) &&
 						(y > quit_rect.y) && (y < quit_rect.y + quit_rect.h))
 					{
 						slog("Pressed Quit button");
+						gfc_sound_clear_all();
 						SDL_DestroyRenderer(gf2d_graphics_get_renderer());
 						SDL_DestroyTexture(menu);
 						done = 1;
@@ -176,26 +184,7 @@ int main(int argc, char * argv[])
 		item_manager_init(50);
 		level_init();
 
-		/*Testing Chipmunk*/
-		//Ball
-		cpFloat radius = 5;
-		cpFloat mass = 1;
-		cpFloat moment = cpMomentForCircle(mass, 0, radius, cpvzero);
-		cpBody* ballBody = cpSpaceAddBody(get_level()->space, cpBodyNew(mass, moment));
-		cpBodySetPosition(ballBody, cpv(200, 20));
-		cpShape* ballShape = cpSpaceAddShape(get_level()->space, cpCircleShapeNew(ballBody, radius, cpvzero));
-		cpShapeSetFriction(ballShape, 0.7);
-
-		cpBody* boxBody = cpSpaceAddBody(get_level()->space, cpBodyNew(mass, moment));
-		cpBodySetPosition(boxBody, cpv(300, 20));
-		cpShape* boxShape = cpSpaceAddShape(get_level()->space, cpBoxShapeNew2(boxBody, cpBBNew(-10.0,-10.0,10.0,10.0), 0.0));
-		//cpSpaceAddShape(space, cpBoxShapeNew(body, 50, 50, 0.0));
-		///shape->e = 0.0f; shape->u = 0.7f;
-		cpShapeSetFriction(boxShape, 0.9);
-		
-
 		cpFloat timeStep = 1.0 / 60.0;
-		/*Testing Chipmunk*/
 
 		SDL_ShowCursor(SDL_DISABLE);
 
@@ -216,6 +205,8 @@ int main(int argc, char * argv[])
 		// Level
 		level_load("locker_room");
 		ui_init();
+		attack_list_init();
+
 
 		cp_vec.x = 500;
 		cp_vec.y = 200;
@@ -248,29 +239,7 @@ int main(int argc, char * argv[])
 			ui_update();
 			ui_draw(resolution);
 
-			//Chipmunk test
-			cpVect pos = cpBodyGetPosition(ballBody);
-			cpVect vel = cpBodyGetVelocity(ballBody);
-			Vector2D position, start, end;
-			position.x = pos.x;
-			position.y = pos.y;
-			gf2d_draw_circle(position, 5, vec);
-			SDL_Rect rect;
-			pos = cpBodyGetPosition(boxBody);
-			rect.x = pos.x;
-			rect.y = pos.y;
-			rect.w = 10;
-			rect.h = 10;
-
-			gf2d_draw_rect(rect, vec);
-			printf(
-				"ballBody is at (%5.2f, %5.2f). It's velocity is (%5.2f, %5.2f)\n",
-				pos.x, pos.y, vel.x, vel.y
-			);
-
 			cpSpaceStep(get_level()->space, timeStep);
-			//Chipmunk test
-
 
 			gf2d_sprite_draw(
 				mouse,
@@ -309,13 +278,6 @@ int main(int argc, char * argv[])
 		SDL_DestroyTexture(menu);
 		done = 1;
 		SDL_Quit();
-
-		// Clean up our objects and exit!
-		//cpShapeFree(ballShape);
-		//cpBodyFree(ballBody);
-		//cpShapeFree(ground);
-		//cpSpaceFree(space);
-
 		return 0;
 	}
 

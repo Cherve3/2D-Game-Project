@@ -2,6 +2,7 @@
     "locker_room":
     {
         "background": "images/backgrounds/locker_room.png",
+        "audio_file":"audio/251461__joshuaempyre__arcade-music-loop.wav",
         "width":1920.00,
         "height":1080.00,
         "spawn_list":[
@@ -16,6 +17,7 @@
     "main_entrance":
     {
         "background": "images/backgrounds/main_entrance.png",
+        "audio_file":"audio/251461__joshuaempyre__arcade-music-loop.wav",
         "width":1920.00,
         "height":1080.00,
         "spawn_list":[
@@ -32,6 +34,7 @@
     "front_lawn":
     {
         "background": "images/backgrounds/front_lawn.png",
+        "audio_file":"audio/545455__bertsz__chiptuned-rock-music.flac",
         "width":1920.00,
         "height":1080.00,
         "spawn_list":[
@@ -46,6 +49,7 @@
     "shop":
     {
         "background": "images/backgrounds/shop.png",
+        "audio_file":"audio/567112__migfus20__relaxing-music.mp3",
         "width":950.00,
         "height":720.00,
         "spawn_list":[
