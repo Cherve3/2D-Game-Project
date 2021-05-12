@@ -202,7 +202,7 @@ void npc_spawn(NPCType type, FightStyle style, cpSpace* space, cpVect position)
 	npc[npc_count].base		= gf2d_sprite_load_image("images/ui/base_bar_npc.png");
 	npc[npc_count].health	= gf2d_sprite_load_image("images/ui/health_bar.png");
 
-	if (type != Friendly || type != Shop)
+	if (type != Friendly && type != Shop)
 	{
 		npc[npc_count].isHostile = true;
 		npc[npc_count].fsm = new_FSM();
@@ -210,7 +210,7 @@ void npc_spawn(NPCType type, FightStyle style, cpSpace* space, cpVect position)
 	}
 
 	filter.categories = npc_f;
-	filter.mask = space_f || world_f || player_f;
+	filter.mask = space_f | world_f | player_f;
 
 	shape = cpBoxShapeNew2(npc[npc_count].ent->body, cpBBNew(-0.1, -1.0, 50.0, 70.0), 0.2);
 	cpShapeSetFilter(shape, filter);

@@ -465,7 +465,7 @@ void *player_spawn(cpSpace *space, cpVect position)
 		player->ent->sprite = gf2d_sprite_load_all("images/player/player_idle_2.png", 60, 80, 33);
 
 		filter.categories = player_f;
-		filter.mask = space_f || camera_f || world_f || npc_f;
+		filter.mask = space_f | camera_f | world_f | npc_f;
 		player->ent->body = cpBodyNew(1.0, INFINITY);
 		cpSpaceAddBody(space, player->ent->body);
 		cpBodySetPosition(player->ent->body, position);

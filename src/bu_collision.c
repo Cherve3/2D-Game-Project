@@ -17,7 +17,7 @@ Bool player_bounds_collision(Rect player, Rect bounds)
 }
 
 Bool entity_collision(Rect ent, Rect other)
-{
+{	
 	if (((ent.x + ent.w) < other.x) || (ent.x > (other.x + other.w)) ||
 		((ent.y + ent.h) < other.y) || (ent.y > (other.y + other.h)))
 	{

@@ -49,7 +49,7 @@
             {"name":"caution",      "position":[100.00,500.00]}
         ],
         "world_list":[
-            {"name":"W_wall_1",       "position":[400.00,0.00],     "dimensions":[1805.00,253.00]}
+            {"name":"W_wall_1",       "position":[1200.00,0.00],     "dimensions":[2000.00,430.00]}
         ]
     },
     "front_lawn":
@@ -73,10 +73,10 @@
             {"name":"water_spray",  "position":[810.00,980.00]}
         ],
         "world_list":[
-            {"name":"W_wall_1",       "position":[1497.00,0.00],    "dimensions":[422.00,113.00]},
-            {"name":"W_building_1",   "position":[906.00,0.00],     "dimensions":[590.00,312.00]},
-            {"name":"W_building_2",   "position":[906.00,458.00],   "dimensions":[428.00,414.00]},
-            {"name":"W_building_3",   "position":[1478.00,458.00],  "dimensions":[441.00,414.00]}
+            {"name":"W_wall_1",       "position":[1400.00,0.00],    "dimensions":[800.00,113.00]},
+            {"name":"W_building_1",   "position":[1200.00,0.00],     "dimensions":[590.00,450.00]},
+            {"name":"W_building_2",   "position":[1100.00,600.00],   "dimensions":[480.00,380.00]},
+            {"name":"W_building_3",   "position":[1800.00,458.00],  "dimensions":[441.00,414.00]}
         ]
     },
     "shop":
