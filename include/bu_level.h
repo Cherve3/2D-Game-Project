@@ -2,9 +2,17 @@
 #define __BU_LEVEL_H__
 
 #include "chipmunk/chipmunk.h"
+#include "chipmunk/chipmunk_types.h"
 
 #include "gf2d_sprite.h"
 #include "bu_entity.h"
+
+#define space_f  0x0001
+#define camera_f 0x0002
+#define world_f  0x0003
+#define player_f 0x0004
+#define npc_f    0x0005
+#define item_f   0x0006
 
 typedef struct
 {

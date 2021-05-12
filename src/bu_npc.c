@@ -10,6 +10,7 @@
 
 #include "gf2d_sprite.h"
 
+#include "bu_level.h"
 #include "bu_money.h"
 #include "bu_npc.h"
 
@@ -20,6 +21,9 @@ static SJson *name_list = NULL;
 
 void print_npc_stats(Uint32 num);
 void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style);
+void set_npc_state(NPC* npc, void (*state)());
+void *patrol(NPC *npc);
+void* idle(NPC* npc);
 
 void npc_load_json()
 {
@@ -118,7 +122,16 @@ void npc_update(Entity *self)
 	npc = (NPC*)self->data;
 	entity_collision_check(self);
 	money = npc->stats.money;
+
+	self->position.x = self->body->p.x;
+	self->position.y = self->body->p.y;
+	self->rect_collider.x = self->position.x;
+	self->rect_collider.y = self->position.y;
+
 	npc_animation(self);
+	
+	update_state(npc->fsm);
+
 	if (npc->stats.life == 0)
 	{
 		spawn_money(money, self->position);
@@ -143,6 +156,7 @@ void npc_spawn(NPCType type, FightStyle style, cpSpace* space, cpVect position)
 {	
 	char ent_name[16];
 	cpShape *shape;
+	cpShapeFilter filter;
 	slog("Spawning NPC...");
 	if (!npc)
 		npc = (NPC*)gfc_allocate_array(sizeof(NPC), 10);
@@ -188,14 +202,60 @@ void npc_spawn(NPCType type, FightStyle style, cpSpace* space, cpVect position)
 	npc[npc_count].base		= gf2d_sprite_load_image("images/ui/base_bar_npc.png");
 	npc[npc_count].health	= gf2d_sprite_load_image("images/ui/health_bar.png");
 
-	if (style != Friendly)
+	if (type != Friendly || type != Shop)
+	{
 		npc[npc_count].isHostile = true;
-	
+		npc[npc_count].fsm = new_FSM();
+		npc[npc_count].fsm->set_state = set_npc_state;
+	}
+
+	filter.categories = npc_f;
+	filter.mask = space_f || world_f || player_f;
+
 	shape = cpBoxShapeNew2(npc[npc_count].ent->body, cpBBNew(-0.1, -1.0, 50.0, 70.0), 0.2);
+	cpShapeSetFilter(shape, filter);
+	cpShapeSetFriction(shape, 1.0);
 	cpSpaceAddShape(space, shape);
 	npc[npc_count].ent->shape = shape;
 
 	npc_count++;
+}
+
+void set_npc_state(NPC *npc, void (*state)())
+{
+	npc->fsm->set_state(state);
+}
+
+void* idle(NPC* npc)
+{
+	int i;
+	if (!npc) return;
+	npc->state.IDLE = true;
+	npc->state.WALK = false;
+	npc->state.RUN = false;
+	npc->ent->body->v.x = 0.0;
+	npc->ent->body->v.y = 0.0;
+	npc->fsm->set_state(npc, patrol(npc));
+}
+
+
+void* patrol(NPC* npc)
+{
+	cpVect destination;
+	cpVect interpolate;
+	if (!npc) return;
+	npc->state.IDLE = false;
+	npc->state.WALK = true;
+	destination.x = (int)(gfc_random(1920) * 1000);
+	destination.y = (int)(gfc_random(1080) * 1000);
+	interpolate = cpvlerpconst(npc->ent->body->p, destination, cpvdist(npc->ent->body->p, destination));
+	slog("X: %f, Y: %f", destination.x, destination.y);
+	slog("nX: %f, nY: %f", npc->ent->body->p.x, npc->ent->body->p.y);
+
+	if (npc->ent->body->p.x != destination.x && npc->ent->body->p.y != destination.y)
+		cpBodySetVelocity(npc->ent->body, interpolate);
+	else
+		npc->fsm->set_state(npc, idle(npc));
 }
 
 void generate_npc_stats(NPCStats *stats, NPCType type, FightStyle style)

@@ -5,6 +5,7 @@
 
 #include "bu_entity.h"
 #include "bu_items.h"
+#include "bu_FSM.h"
 
 typedef enum {
 	Friendly,
@@ -67,6 +68,7 @@ typedef struct
 	Sprite *name;
 	Sprite *health;
 	Sprite *base;
+	FSM *fsm;
 }NPC;
 
 /**

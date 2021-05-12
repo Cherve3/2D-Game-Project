@@ -1,0 +1,37 @@
+{
+    "fire_hydrant":
+    {
+        "name":"Fire Hydrant",
+        "sprite":"images/hazards/fire_hydrant.png",
+        "dimensions":[30,50],
+        "damage":5
+    },
+    "water_spray":
+    {
+        "name":"Water Spray",
+        "sprite":"images/hazards/water_spray.png",
+        "dimensions":[230,50],
+        "damage":40
+    },
+    "puddle":
+    {
+        "name":"Puddle",
+        "sprite":"images/hazards/puddle.png",
+        "dimensions":[90,60],
+        "damage":20
+    },
+    "caution":
+    {
+        "name":"Caution Sign",
+        "sprite":"images/hazards/caution.png",
+        "dimensions":[80,100],
+        "damage":5
+    },
+    "car":
+    {
+        "name":"Car",
+        "sprite":"images/hazards/car.png",
+        "sprite_dimensions":[194,145],
+        "damage":50
+    }
+}

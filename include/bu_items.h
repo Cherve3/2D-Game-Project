@@ -10,6 +10,7 @@ typedef enum
 	consumable,
 	weapon,
 	equipment,
+	hazard
 }ItemType;
 
 typedef struct{
@@ -36,5 +37,11 @@ void item_free();
 void item_new(TextWord *item_name, ItemType type, cpVect position);
 
 void item_manager_init(Uint32 maxItems);
+
+Uint32 get_max_items();
+
+Uint32 get_item_count();
+
+Item *get_item_list();
 
 #endif

@@ -12,7 +12,15 @@
             {"name":"jock_3",       "position":[500.00,800.00],  "type":2, "style":1},
             {"name":"jock_4",       "position":[200.00,200.00],  "type":2, "style":1},
             {"name":"locker_exit",  "position":[1900.00,250.00], "dimension":[5.00,880.00], "location":"main_entrance"}
-            ]
+            ],
+        "world_list":[
+            {"name":"wall_1",       "position":[0.00,0.00],     "dimensions":[1080.00,241.00]},
+            {"name":"wall_2",       "position":[267.00,242.00], "dimensions":[53.00,135.00]},
+            {"name":"wall_3",       "position":[620.00,242.00], "dimensions":[53.00,135.00]},
+            {"name":"lockers",      "position":[418.00,534.00], "dimensions":[959.00,198.00]},
+            {"name":"bench_1",      "position":[448.00,849.00], "dimensions":[432.00,43.00]},
+            {"name":"bench_2",      "position":[933.00,849.00], "dimensions":[415.00,43.00]}
+        ]
     },
     "main_entrance":
     {
@@ -29,6 +37,13 @@
             {"name":"nerd_2",       "position":[600.00,500.00],   "type":1, "style":3},
             {"name":"hall_exit",    "position":[10.00,10.00],     "dimension":[100.00,100.00], "location":"locker_room"},
             {"name":"school_exit",  "position":[1900.00,800.00],  "dimension":[100.00,100.00], "location":"front_lawn"}
+        ],
+        "item_list":[
+            {"name":"puddle",       "position":[200.00,600.00]},
+            {"name":"caution",      "position":[100.00,500.00]}
+        ],
+        "world_list":[
+            {"name":"wall_1",       "position":[115.00,0.00],     "dimensions":[1805.00,253.00]}
         ]
     },
     "front_lawn":
@@ -44,6 +59,18 @@
             {"name":"goth_3",       "position":[1800.00,250.00],   "type":3, "style":1},
             {"name":"lawn_exit",    "position":[-50.00,300.00],     "dimension":[100.00,100.00], "location":"main_entrance"},
             {"name":"block_exit",   "position":[1050.00,750.00],  "dimension":[100.00,100.00], "location":"shop"}
+        ],
+        "item_list":[
+            
+            {"name":"car",          "position":[570.00,935.00]},
+            {"name":"fire_hydrant", "position":[780.00,980.00]},
+            {"name":"water_spray",  "position":[810.00,980.00]}
+        ],
+        "world_list":[
+            {"name":"wall_1",       "position":[1497.00,0.00],    "dimensions":[422.00,113.00]},
+            {"name":"building_1",   "position":[906.00,0.00],     "dimensions":[590.00,312.00]},
+            {"name":"building_2",   "position":[906.00,458.00],   "dimensions":[428.00,414.00]},
+            {"name":"building_3",   "position":[1478.00,458.00],  "dimensions":[441.00,414.00]}
         ]
     },
     "shop":
@@ -66,6 +93,13 @@
             {"name":"book_weapon",  "position":[150.00,600.00], "type":0},
             {"name":"book_throw",   "position":[300.00,600.00], "type":0},                
             {"name":"shop_exit",    "position":[475.00,720.00], "dimension":[100.00,100.00], "location":"front_lawn"}
+        ],
+        "world_list":[
+            {"name":"wall_1",       "position":[0.00,0.00],     "dimensions":[1920.00,83.00]},
+            {"name":"wall_2",       "position":[0.00,84.00],     "dimensions":[79.00,636.00]},
+            {"name":"wall_3",       "position":[864.00,84.00],     "dimensions":[86.00,636.00]},
+            {"name":"counter",       "position":[80.00,135.00],     "dimensions":[786.00,127.00]},
+            {"name":"dresser",       "position":[80.00,301.00],     "dimensions":[43.00,128.00]}
         ]
     }
 }

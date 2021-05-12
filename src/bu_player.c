@@ -36,25 +36,25 @@ void player_free()
 
 void check_player_bounds(Entity *self)
 {
-	if (self->rect_collider.x < camera_get_player_bounds().x){
-		camera_move(vector2d(-2 - self->velocity.x, 0));
-		//player->ent->rect_collider.x -= self->velocity;
+	if (self->body->p.x < camera_get_player_bounds().x){
+		camera_move(vector2d(-3, 0));
 	}
 
-	if (self->rect_collider.x + self->rect_collider.w >(camera_get_player_bounds().x + camera_get_player_bounds().w))
+	if (self->body->p.x + self->rect_collider.w >(camera_get_player_bounds().x + camera_get_player_bounds().w))
 	{
-		camera_move(vector2d(2 + self->velocity.x, 0));
-		//player->ent->rect_collider.x += self->velocity;
+		camera_move(vector2d(3, 0));
 	}
-	if (self->rect_collider.y < camera_get_player_bounds().y){
-		camera_move(vector2d(0, -2 - self->velocity.y));
-		//player->ent->rect_collider.y -= self->velocity;
+	if (self->body->p.y < camera_get_player_bounds().y){
+		camera_move(vector2d(0,-3));
 	}
 
-	if (self->rect_collider.y + self->rect_collider.h >(camera_get_player_bounds().y + camera_get_player_bounds().h)){
-		camera_move(vector2d(0, 2 + self->velocity.y));
-		//player->ent->rect_collider.y += self->velocity;
+	if (self->body->p.y + self->rect_collider.h >(camera_get_player_bounds().y + camera_get_player_bounds().h)){
+		camera_move(vector2d(0,3));
 	}
+	//slog("Body X = %f  < cameraBOunds X = %f", self->body->p.x, camera_get_player_bounds().x);
+	//slog("Body Y = %f  < cameraBOunds Y = %f", self->body->p.y, camera_get_player_bounds().y);
+	//slog("body+rect X = %f  >  cameraBound X = %f ", self->body->p.x + self->rect_collider.w, camera_get_player_bounds().x + camera_get_player_bounds().w);
+	//slog("body+rect Y = %f  >  cameraBound Y = %f ", self->body->p.y + self->rect_collider.h, camera_get_player_bounds().y + camera_get_player_bounds().h);
 }
 
 void player_controls(Entity *self)
@@ -78,13 +78,13 @@ void player_controls(Entity *self)
 			player->state.WALK = false;
 			player->state.RUN = true;
 			if(keys[SDL_SCANCODE_A])
-				self->velocity.x = -200.1;
+				self->velocity.x = -200.0;
 			if (keys[SDL_SCANCODE_S])
-				self->velocity.y = 200.1;
+				self->velocity.y = 200.0;
 			if (keys[SDL_SCANCODE_D])
-				self->velocity.x = 200.1;
+				self->velocity.x = 200.0;
 			if (keys[SDL_SCANCODE_W])
-				self->velocity.y = -200.1;
+				self->velocity.y = -200.0;
 		}
 	}
 	else if ((keys[SDL_SCANCODE_A] || keys[SDL_SCANCODE_W] || keys[SDL_SCANCODE_S] || keys[SDL_SCANCODE_D]))
@@ -247,11 +247,16 @@ void player_think(Entity* self)
 	//slog("Can Carry:     %i", player->stats.can_carry);
 	//slog("Pickup Item:   %i", player->stats.pickup_item);
 	//slog("Throw Item:    %i", player->stats.throw_item);
-	//check_player_bounds(self);
+	check_player_bounds(self);
 	entity_collision_check(self);
-	if (player->stats.life == 0 && player->stats.money != 0)
+	if (player->stats.life <= 0)
 	{
-		spawn_money(player->stats.money, self->position);
+		slog("YOU DIED");
+		if(player->stats.money != 0)
+			spawn_money(player->stats.money, self->position);
+		player->ent->body->p = player->ent->spawn_pos;
+		player->stats.life = player->stats.life_max;
+		player->stats.stamina = player->stats.stamina_max;
 		player->stats.money = 0;
 	}
 
@@ -305,7 +310,6 @@ void player_update(Entity *self)
 		player->stats.stamina = player->stats.stamina_max;
 	if (player->stats.stamina == 0)
 		player->state.RUN = false;
-	slog("VELOCITY: %f, %f", self->velocity.x, self->velocity.y);
 	//slog("--------------------------------------");
 	//slog("RUN:    %i", player->state.RUN);
 	//slog("WALK:   %i", player->state.WALK);
@@ -445,6 +449,7 @@ Uint32 get_player_time()
 void *player_spawn(cpSpace *space, cpVect position)
 {
 	cpShape *shape;
+	cpShapeFilter filter;
 
 	if (!player)
 		player = (Player*)gfc_allocate_array(sizeof(Player), 2);
@@ -460,8 +465,21 @@ void *player_spawn(cpSpace *space, cpVect position)
 		}
 		player->ent->name = "Player 1";
 		player->ent->sprite = gf2d_sprite_load_all("images/player/player_idle_2.png", 60, 80, 33);
-		player->ent->position.x = position.x;
-		player->ent->position.y = position.y;
+
+		filter.categories = player_f;
+		filter.mask = space_f || camera_f || world_f || npc_f;
+		player->ent->body = cpBodyNew(1.0, INFINITY);
+		cpSpaceAddBody(space, player->ent->body);
+		cpBodySetPosition(player->ent->body, position);
+		shape = cpBoxShapeNew2(player->ent->body, cpBBNew(-0.1, -1.0, 50.0, 70.0), 0.2);
+		cpShapeSetFilter(shape, filter);
+		cpShape* p_shape = cpSpaceAddShape(space, shape);
+		player->ent->shape = p_shape;
+
+		player->ent->spawn_pos.x = cpBodyGetPosition(player->ent->body).x;
+		player->ent->spawn_pos.y = cpBodyGetPosition(player->ent->body).y;
+		player->ent->position.x = cpBodyGetPosition(player->ent->body).x;
+		player->ent->position.y = cpBodyGetPosition(player->ent->body).y;
 		slog("position player: %f, %f", position.x, position.y);
 		player->ent->frameRate       = 0.1;
 		player->ent->frameCount      = 33;
@@ -485,13 +503,6 @@ void *player_spawn(cpSpace *space, cpVect position)
 		player->stats.throw_item       = false;
 		slog("Player %i spawning...", player->player_number);
 		player_time = SDL_GetTicks();
-
-		player->ent->body = cpBodyNew(1.0, INFINITY);
-		cpSpaceAddBody(space, player->ent->body);
-		cpBodySetPosition(player->ent->body, player->ent->position);
-		shape = cpBoxShapeNew2(player->ent->body, cpBBNew(-0.1, -1.0, 50.0, 70.0), 0.2);
-		cpShape* p_shape = cpSpaceAddShape(space, shape);
-		player->ent->shape = p_shape;
 	}
 	else
 		slog("Warning: There are already two players active"); return NULL;

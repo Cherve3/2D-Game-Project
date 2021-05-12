@@ -1,10 +1,11 @@
 
 #include "simple_logger.h"
 
+#include "bu_level.h"
 #include "bu_camera.h"
 #include "bu_collision.h"
 #include "bu_player.h"
-#include "bu_level.h"
+
 
 static Camera camera = { 0 };
 
@@ -57,6 +58,7 @@ void camera_set_position(Vector2D position)
 
 void camera_move(Vector2D move)
 {
+	//slog("MOVE x : %f , MOVE Y : %f", move.x, move.y);
 	
 	camera.view.x += move.x;
 	camera.view.y += move.y;
@@ -95,9 +97,9 @@ void camera_move(Vector2D move)
 	}
 	//slog("PlayerC x: %f, playerC y: %f", get_player_collider().x, get_player_collider().y);
 	//slog("PlayerC w: %f, playerC h: %f", get_player_collider().w, get_player_collider().h);
-	/*slog("camera view x: %f, camera view y: %f", camera.view.x, camera.view.y);
-	slog("camera view w: %f, camera view h: %f", camera.view.w, camera.view.h);
-	slog("camera bounds x: %f, camera bounds y: %f", camera.bounds.x, camera.bounds.y);*/
+	//slog("camera view x: %f, camera view y: %f", camera.view.x, camera.view.y);
+	//slog("camera view w: %f, camera view h: %f", camera.view.w, camera.view.h);
+	//slog("camera bounds x: %f, camera bounds y: %f", camera.bounds.x, camera.bounds.y);
 	//slog("camera playerB x: %f, camera playerB y: %f", camera.playerBounds.x, camera.playerBounds.y);
 	//slog("camera playerB w: %f, camera playerB h: %f\n", camera.playerBounds.w, camera.playerBounds.h);
 	

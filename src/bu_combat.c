@@ -21,7 +21,7 @@ void draw_attack(Rect attack);
 
 Attack *new_attack()
 {
-	Attack *attack = gfc_allocate_array(sizeof(Attack), 1);;
+	Attack *attack = gfc_allocate_array(sizeof(Attack), 1);
 	attack->audio = gfc_allocate_array(sizeof(Sound), 2);
 
 	return attack;

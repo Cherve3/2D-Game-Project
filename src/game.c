@@ -21,6 +21,7 @@
 #include "bu_level.h"
 #include "bu_items.h"
 #include "bu_combat.h"
+#include "bu_hazards.h"
 
 int main(int argc, char * argv[])
 {
@@ -211,6 +212,9 @@ int main(int argc, char * argv[])
 		cp_vec.x = 500;
 		cp_vec.y = 200;
 		item_new("item_bat", weapon, cp_vec);
+		cp_vec.x = 500;
+		cp_vec.y = 500;
+		new_hazard("puddle", cp_vec);
 		slog_sync();
 		Vector2D start, end, position;
 		/*main game loop*/
@@ -231,7 +235,7 @@ int main(int argc, char * argv[])
 
 			level_draw();
 			// Player bounds rect
-			//gf2d_draw_rect(rect, vec);
+			gf2d_draw_rect(rect, vec);
 
 			entity_draw_all();
 

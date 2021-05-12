@@ -38,7 +38,7 @@ void door_spawn(cpVect position, Vector2D dimension, TextWord **args)
 	door->_inuse = 1;
 	door->position.x = position.x;
 	door->position.y = position.y;
-	door->sprite = "images/door.png";
+	//door->sprite = "images/door.png";
 	door->rect_collider.x = position.x;
 	door->rect_collider.y = position.y;
 	door->rect_collider.w = dimension.x;

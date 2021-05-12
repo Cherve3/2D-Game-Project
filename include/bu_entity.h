@@ -19,6 +19,7 @@ typedef struct Entity_s
 
 	/*physics*/
 	cpVect		position;
+	cpVect		spawn_pos;
 	cpVect      velocity;
 	cpShape	   *shape;
 	cpBody     *body;

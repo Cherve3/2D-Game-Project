@@ -3,6 +3,7 @@
 
 #include "bu_money.h"
 #include "bu_player.h"
+#include "bu_level.h"
 #include "bu_entity.h"
 
 typedef struct
@@ -37,6 +38,9 @@ void money_think(Entity *self)
 void spawn_money(int value, cpVect position)
 {
 	Entity *ent;
+	cpShape* shape;
+	cpShapeFilter filter;
+
 	Money *money = gfc_allocate_array(sizeof(Money),1);
 	ent = entity_new();
 	if (!money) return;
@@ -50,6 +54,14 @@ void spawn_money(int value, cpVect position)
 	ent->rect_collider.h = 20;
 	ent->think = money_think;
 	ent->onTouch = money_touch;
+	ent->body = cpBodyNew(1.0, INFINITY);
+	cpSpaceAddBody(get_level()->space, ent->body);
+	cpBodySetPosition(ent->body, ent->position);
+	filter.categories = item_f;
+	filter.mask = space_f || world_f;
+	shape = cpBoxShapeNew2(ent->body, cpBBNew(-0.1, -1.0, 50.0, 70.0), 0.2);
+	cpShapeSetFilter(shape, filter);
+	cpShape* p_shape = cpSpaceAddShape(get_level()->space, shape);
 	ent->data = (void*)money;
 	ent->sprite = gf2d_sprite_load_image("images/items/money.png");
 	

@@ -12,6 +12,7 @@
 #include "bu_level.h"
 #include "bu_door.h"
 #include "bu_items.h"
+#include "bu_hazards.h"
 #include "bu_player.h"
 #include "bu_npc.h"
 #include "bu_shop.h"
@@ -21,6 +22,8 @@ static const char *LEVEL_JSON = "json/level.json";
 static Level *level = { 0 };
 static SJson *level_json = NULL;
 static SJson *spawn_list = NULL;
+static SJson *item_list  = NULL;
+static SJson *world_list = NULL;
 
 void level_free()
 {
@@ -66,26 +69,6 @@ void level_init()
 	cpSpaceSetCollisionSlop(level->space, 0.1);
 	cpSpaceUseSpatialHash(level->space, 200.0, 10);
 	staticBody = cpSpaceGetStaticBody(level->space);
-	
-	/*
-	// Horizontal ceiling
-	staticBody = cpSpaceGetStaticBody(level->space);
-	ground = cpSegmentShapeNew(staticBody, cpv(0.0, 10), cpv(1920.0, 10.0), 0);
-	cpShapeSetFriction(ground, 1.0);
-	cpSpaceAddShape(level->space, ground);
-	//Vertical wall left
-	ground = cpSegmentShapeNew(staticBody, cpv(10.0, 0.0), cpv(10.0, 1080.0), 0);
-	cpShapeSetFriction(ground, 1.0);
-	cpSpaceAddShape(level->space, ground);
-	// Horizontal floor
-	ground = cpSegmentShapeNew(staticBody, cpv(0.0, 390.0), cpv(1920.0, 390.0), 0);
-	cpShapeSetFriction(ground, 1.0);
-	cpSpaceAddShape(level->space, ground);
-	// Vertical right
-	ground = cpSegmentShapeNew(staticBody, cpv(650.0, 0.0), cpv(650.0, 1080.0), 0);
-	cpShapeSetFriction(ground, 1.0);
-	cpSpaceAddShape(level->space, ground);
-	*/
 
 	level->border_top = cpSegmentShapeNew(staticBody, cpv(0, 0), cpv(1920, 0), 0);
 	cpShapeSetFriction(level->border_top, 1);
@@ -103,8 +86,6 @@ void level_init()
 	cpShapeSetFriction(level->border_left, 1);
 	cpSpaceAddShape(level->space, level->border_left);
 
-	
-
 	slog("Level initialized.");
 }
 
@@ -120,10 +101,53 @@ void clear_entities()
 	}
 }
 
+void clear_items()
+{
+	int i;
+	for (i = 0; i < get_max_items(); i++)
+	{
+		if (!get_item_list()[i]._inuse) continue;
+		//if (&get_entities_list()[i] == get_player()->ent) continue; TODO: save the item that is being carried by player
+		item_free(&get_item_list()[i]);
+	}
+}
+
+void level_spawn_items(SJson* itemList)
+{
+	int i = 0, count = 0;
+	SJson* item_json = NULL;
+	TextWord* name;
+	TextWord** args = NULL;
+	Vector2D   position;
+	cpVect    cp_position;
+	Vector2D dimension;
+	ItemType item_type;
+
+	item_type = hazard;
+	count = sj_array_get_count(itemList);
+
+	clear_items();
+	slog("Items cleared");
+
+	for (i = 0; i < count; i++)
+	{
+		vector2d_clear(position);
+		item_json = sj_array_get_nth(itemList, i);
+		if (!item_json)continue;
+
+		name = sj_get_string_value(sj_object_get_value(item_json, "name"));
+		sj_value_as_vector2d(sj_object_get_value(item_json, "position"), &position);
+		slog("Position::: %f, %f", position.x, position.y);
+		cp_position.x = position.x;
+		cp_position.y = position.y;
+		new_hazard(name, cp_position);
+	}
+}
+
 void level_spawn_entities(SJson *spawnList)
 {
 	int i = 0, count = 0;
-	SJson *spawn_json;
+	SJson *spawn_json = NULL;
 	TextWord *name;
 	TextWord **args = NULL;
 	Vector2D   position;
@@ -146,7 +170,6 @@ void level_spawn_entities(SJson *spawnList)
 
 	shop_init();
 
-	spawn_json = NULL;
 	for (i = 0; i < count; i++)
 	{
 		vector2d_clear(position);
@@ -157,8 +180,9 @@ void level_spawn_entities(SJson *spawnList)
 			sj_value_as_vector2d(sj_object_get_value(spawn_json, "position_1"), &position);
 			slog("Position::: %f, %f", position.x, position.y);
 			if (get_player()){
-				get_player()->ent->position.x = position.x;
-				get_player()->ent->position.y = position.y;
+				cp_position.x = position.x;
+				cp_position.y = position.y;
+				cpBodySetPosition(get_player()->ent->body, cp_position);
 			}
 			else
 			{
@@ -203,6 +227,11 @@ void level_spawn_entities(SJson *spawnList)
 	}
 }
 
+level_spawn_world()
+{
+
+}
+
 void level_load(char *name)
 {
 	SJson *level_info = sj_object_get_value(level_json, name);
@@ -214,11 +243,18 @@ void level_load(char *name)
 	position.y = 0;
 	if (spawn_list)
 		spawn_list = NULL;
+	if (item_list)
+		item_list = NULL;
 	
 	spawn_list = sj_object_get_value(level_info, "spawn_list");
 	if (!spawn_list)
 		slog("Spawn list does not exist.");
-	gfc_sound_clear_all();
+	item_list = sj_object_get_value(level_info, "item_list");
+	if (!spawn_list)
+		slog("Spawn list does not exist.");
+
+	//gfc_sound_free()
+	
 	slog("Loading level %s", name);
 
 	if (!level_info)
@@ -238,6 +274,7 @@ void level_load(char *name)
 	sj_get_float_value(sj_object_get_value(level_info, "height"), &level->height);
 
 	level_spawn_entities(spawn_list);
+	level_spawn_items(item_list);
 	slog("Entities spawned.");
 	//print_entities();
 	//print_npc();
@@ -246,7 +283,6 @@ void level_load(char *name)
 void level_draw()
 {
 	Vector2D offset, drawPosition;
-	//cpFloat timeStep = 1.0 / 60.0;
 	int i;
 	if (!level)
 	{
@@ -260,24 +296,24 @@ void level_draw()
 	gf2d_sprite_draw_image(level->background, vector2d(drawPosition.x + offset.x, drawPosition.y + offset.y));
 
 	Vector2D start, end;
-	start.x = 0.0+camera_get_offset().x;
-	start.y = 10.0 + camera_get_offset().y;
-	end.x = 1920.0 + camera_get_offset().x;
-	end.y = 10.0 + camera_get_offset().y;
-	gf2d_draw_line(start, end, vector4d(255, 255, 255, 255));
-	start.x = 10.0 + camera_get_offset().x;
+	start.x = 0.0 +camera_get_offset().x;
 	start.y = 0.0 + camera_get_offset().y;
-	end.x = 10.0 + camera_get_offset().x;
+	end.x = 1920.0 + camera_get_offset().x;
+	end.y = 0.0 + camera_get_offset().y;
+	gf2d_draw_line(start, end, vector4d(255, 255, 255, 255));
+	start.x = 0.0 + camera_get_offset().x;
+	start.y = 0.0 + camera_get_offset().y;
+	end.x = 0.0 + camera_get_offset().x;
+	end.y = 1080.0 + camera_get_offset().y;
+	gf2d_draw_line(start, end, vector4d(255, 255, 255, 255));
+	start.x = 1920.0 + camera_get_offset().x;
+	start.y = 0.0 + camera_get_offset().y;
+	end.x = 1920.0 + camera_get_offset().x;
 	end.y = 1080.0 + camera_get_offset().y;
 	gf2d_draw_line(start, end, vector4d(255, 255, 255, 255));
 	start.x = 0.0 + camera_get_offset().x;
-	start.y = 390.0 + camera_get_offset().y;
+	start.y = 1080.0 + camera_get_offset().y;
 	end.x = 1920.0 + camera_get_offset().x;
-	end.y = 390.0 + camera_get_offset().y;
-	gf2d_draw_line(start, end, vector4d(255, 255, 255, 255));
-	start.x = 650.0 + camera_get_offset().x;
-	start.y = 0.0 + camera_get_offset().y;
-	end.x = 650.0 + camera_get_offset().x;
 	end.y = 1080.0 + camera_get_offset().y;
 	gf2d_draw_line(start, end, vector4d(255, 255, 255, 255));
 }
