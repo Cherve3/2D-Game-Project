@@ -15,7 +15,7 @@
         {
             "name":"Sandwich",
             "sprite":"images/items/item_sandwich.png",
-            "dimensions":[180,155],
+            "dimensions":[150,150],
             "description":"A premade sandwich.",
             "armor":0,
             "damage":40,
@@ -25,7 +25,7 @@
         {
             "name":"Punch Book",
             "sprite":"images/items/book_punch.png",
-            "dimensions":[400,400],
+            "dimensions":[150,150],
             "description":"A book about the art of punching.",
             "armor":0,
             "damage":1,
@@ -35,7 +35,7 @@
         {
             "name":"Punch Book",
             "sprite":"images/items/book_kick.png",
-            "dimensions":[400,400],
+            "dimensions":[150,150],
             "description":"A book about the art of kicking.",
             "armor":0,
             "damage":1,
@@ -45,7 +45,7 @@
         {
             "name":"Punch Book",
             "sprite":"images/items/book_weapon.png",
-            "dimensions":[400,400],
+            "dimensions":[150,150],
             "description":"A book about the art of weapons.",
             "armor":0,
             "damage":1,
@@ -55,7 +55,7 @@
         {
             "name":"Punch Book",
             "sprite":"images/items/book_throw.png",
-            "dimensions":[400,400],
+            "dimensions":[150,150],
             "description":"A book about the art of throwing.",
             "armor":0,
             "damage":1,

@@ -13,14 +13,20 @@
             {"name":"jock_4",       "position":[200.00,200.00],  "type":2, "style":1},
             {"name":"locker_exit",  "position":[1900.00,250.00], "dimension":[5.00,880.00], "location":"main_entrance"}
             ],
+        "item_list":[
+            {"name":"puddle",        "position":[500.00,500.00], "dimensions":[100.00,100.00]}
+        ],  
         "world_list":[
-            {"name":"wall_1",       "position":[0.00,0.00],     "dimensions":[1080.00,241.00]},
-            {"name":"wall_2",       "position":[267.00,242.00], "dimensions":[53.00,135.00]},
-            {"name":"wall_3",       "position":[620.00,242.00], "dimensions":[53.00,135.00]},
-            {"name":"lockers",      "position":[418.00,534.00], "dimensions":[959.00,198.00]},
-            {"name":"bench_1",      "position":[448.00,849.00], "dimensions":[432.00,43.00]},
-            {"name":"bench_2",      "position":[933.00,849.00], "dimensions":[415.00,43.00]}
+            {"name":"W_wall_1",      "position":[0.00,0.00],     "dimensions":[3800.00,400.00]},
+            {"name":"W_wall_2",      "position":[300.00,242.00], "dimensions":[80.00,160.00]},
+            {"name":"W_wall_3",      "position":[630.00,242.00], "dimensions":[80.00,160.00]},
+            {"name":"W_lockers",     "position":[860.00,600.00], "dimensions":[959.00,198.00]},
+            {"name":"W_bench_1",     "position":[620.00,849.00], "dimensions":[500.00,43.00]},
+            {"name":"W_bench_2",     "position":[1130.00,849.00], "dimensions":[450.00,43.00]}
         ]
+            
+           
+        
     },
     "main_entrance":
     {
@@ -43,7 +49,7 @@
             {"name":"caution",      "position":[100.00,500.00]}
         ],
         "world_list":[
-            {"name":"wall_1",       "position":[115.00,0.00],     "dimensions":[1805.00,253.00]}
+            {"name":"W_wall_1",       "position":[400.00,0.00],     "dimensions":[1805.00,253.00]}
         ]
     },
     "front_lawn":
@@ -67,10 +73,10 @@
             {"name":"water_spray",  "position":[810.00,980.00]}
         ],
         "world_list":[
-            {"name":"wall_1",       "position":[1497.00,0.00],    "dimensions":[422.00,113.00]},
-            {"name":"building_1",   "position":[906.00,0.00],     "dimensions":[590.00,312.00]},
-            {"name":"building_2",   "position":[906.00,458.00],   "dimensions":[428.00,414.00]},
-            {"name":"building_3",   "position":[1478.00,458.00],  "dimensions":[441.00,414.00]}
+            {"name":"W_wall_1",       "position":[1497.00,0.00],    "dimensions":[422.00,113.00]},
+            {"name":"W_building_1",   "position":[906.00,0.00],     "dimensions":[590.00,312.00]},
+            {"name":"W_building_2",   "position":[906.00,458.00],   "dimensions":[428.00,414.00]},
+            {"name":"W_building_3",   "position":[1478.00,458.00],  "dimensions":[441.00,414.00]}
         ]
     },
     "shop":
@@ -95,11 +101,11 @@
             {"name":"shop_exit",    "position":[475.00,720.00], "dimension":[100.00,100.00], "location":"front_lawn"}
         ],
         "world_list":[
-            {"name":"wall_1",       "position":[0.00,0.00],     "dimensions":[1920.00,83.00]},
-            {"name":"wall_2",       "position":[0.00,84.00],     "dimensions":[79.00,636.00]},
-            {"name":"wall_3",       "position":[864.00,84.00],     "dimensions":[86.00,636.00]},
-            {"name":"counter",       "position":[80.00,135.00],     "dimensions":[786.00,127.00]},
-            {"name":"dresser",       "position":[80.00,301.00],     "dimensions":[43.00,128.00]}
+            {"name":"W_wall_1",       "position":[0.00,0.00],     "dimensions":[1920.00,83.00]},
+            {"name":"W_wall_2",       "position":[0.00,84.00],     "dimensions":[79.00,636.00]},
+            {"name":"W_wall_3",       "position":[864.00,84.00],     "dimensions":[86.00,636.00]},
+            {"name":"W_counter",       "position":[80.00,135.00],     "dimensions":[786.00,127.00]},
+            {"name":"W_dresser",       "position":[80.00,301.00],     "dimensions":[43.00,128.00]}
         ]
     }
 }

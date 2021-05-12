@@ -70,19 +70,19 @@ void level_init()
 	cpSpaceUseSpatialHash(level->space, 200.0, 10);
 	staticBody = cpSpaceGetStaticBody(level->space);
 
-	level->border_top = cpSegmentShapeNew(staticBody, cpv(0, 0), cpv(1920, 0), 0);
+	level->border_top = cpSegmentShapeNew(staticBody, cpv(0, 0), cpv(1920, 0), 1);
 	cpShapeSetFriction(level->border_top, 1);
 	cpSpaceAddShape(level->space, level->border_top);
 
-	level->border_right = cpSegmentShapeNew(staticBody, cpv(1920, 0), cpv(1920, 1080), 0);
+	level->border_right = cpSegmentShapeNew(staticBody, cpv(1920, 0), cpv(1920, 1080), 1);
 	cpShapeSetFriction(level->border_right, 1);
 	cpSpaceAddShape(level->space, level->border_right);
 
-	level->border_bottom = cpSegmentShapeNew(staticBody, cpv(0, 1080), cpv(1920, 1080), 0);
+	level->border_bottom = cpSegmentShapeNew(staticBody, cpv(0, 1080), cpv(1920, 1080), 1);
 	cpShapeSetFriction(level->border_bottom, 1);
 	cpSpaceAddShape(level->space, level->border_bottom);
 
-	level->border_left = cpSegmentShapeNew(staticBody, cpv(0, 0), cpv(0, 1080), 0);
+	level->border_left = cpSegmentShapeNew(staticBody, cpv(0, 0), cpv(0, 1080), 1);
 	cpShapeSetFriction(level->border_left, 1);
 	cpSpaceAddShape(level->space, level->border_left);
 
@@ -97,6 +97,7 @@ void clear_entities()
 		if (!get_entities_list()[i]._inuse) continue;
 		if (&get_entities_list()[i] == get_player()->ent) continue;
 		entity_free(&get_entities_list()[i]);
+		cpBodyDestroy(get_entities_list()[i].body);
 		clear_npcs();
 	}
 }
@@ -112,12 +113,26 @@ void clear_items()
 	}
 }
 
+void clear_world()
+{
+	int i;
+	for (i = 0; i < get_max_entities(); i++)
+	{
+		slog("NMAME: %s", get_entities_list()[i].name);
+		if (!get_entities_list()[i]._inuse) continue;
+		if (strstr(get_entities_list()[i].name, "W_") != NULL)
+		{
+			cpSpaceRemoveShape(get_level()->space, get_entities_list()[i].shape);
+			cpSpaceRemoveBody(get_level()->space, get_entities_list()[i].body);
+		}
+	}
+}
+
 void level_spawn_items(SJson* itemList)
 {
 	int i = 0, count = 0;
 	SJson* item_json = NULL;
 	TextWord* name;
-	TextWord** args = NULL;
 	Vector2D   position;
 	cpVect    cp_position;
 	Vector2D dimension;
@@ -165,6 +180,7 @@ void level_spawn_entities(SJson *spawnList)
 	count = sj_array_get_count(spawnList);
 	slog("count: %i", count);
 
+	clear_world();
 	clear_entities();
 	slog("Entities cleared");
 
@@ -227,9 +243,43 @@ void level_spawn_entities(SJson *spawnList)
 	}
 }
 
-level_spawn_world()
+level_spawn_world(SJson *worldList)
 {
+	int i = 0, count = 0;
+	SJson* world_json = NULL;
+	TextWord* name;
+	Vector2D   position;
+	cpVect    cp_position;
+	cpShape *shape;
+	Vector2D dimension;
+	Entity **ent;
 
+	count = sj_array_get_count(worldList);
+	ent = (Entity*)gfc_allocate_array(sizeof(Entity), count);
+	for (i = 0; i < count; i++)
+	{
+		vector2d_clear(position);
+		world_json = sj_array_get_nth(worldList, i);
+		if (!world_json)continue;
+
+		name = sj_get_string_value(sj_object_get_value(world_json, "name"));
+		sj_value_as_vector2d(sj_object_get_value(world_json, "position"), &position);
+		sj_value_as_vector2d(sj_object_get_value(world_json, "dimensions"), &dimension);
+		slog("NAME: %s", name);
+		slog("Position::: %f, %f", position.x, position.y);
+		slog("Dimension::: %f, %f", dimension.x, dimension.y);
+		cp_position.x = position.x;
+		cp_position.y = position.y;
+		ent[i] = entity_new();
+		ent[i]->name = name;
+		ent[i]->body = cpBodyNewStatic();
+
+		cpSpaceAddBody(get_level()->space, ent[i]->body);
+		cpBodySetPosition(ent[i]->body, cp_position);
+		shape = cpBoxShapeNew(ent[i]->body, dimension.x, dimension.y, 0);
+		cpSpaceAddShape(get_level()->space, shape);
+		ent[i]->shape = shape;
+	}
 }
 
 void level_load(char *name)
@@ -245,15 +295,18 @@ void level_load(char *name)
 		spawn_list = NULL;
 	if (item_list)
 		item_list = NULL;
+	if (world_list)
+		world_list = NULL;
 	
 	spawn_list = sj_object_get_value(level_info, "spawn_list");
 	if (!spawn_list)
 		slog("Spawn list does not exist.");
 	item_list = sj_object_get_value(level_info, "item_list");
-	if (!spawn_list)
-		slog("Spawn list does not exist.");
-
-	//gfc_sound_free()
+	if (!item_list)
+		slog("Item list does not exist.");
+	world_list = sj_object_get_value(level_info, "world_list");
+	if (!world_list)
+		slog("World list does not exist.");
 	
 	slog("Loading level %s", name);
 
@@ -274,6 +327,7 @@ void level_load(char *name)
 	sj_get_float_value(sj_object_get_value(level_info, "height"), &level->height);
 
 	level_spawn_entities(spawn_list);
+	level_spawn_world(world_list);
 	level_spawn_items(item_list);
 	slog("Entities spawned.");
 	//print_entities();

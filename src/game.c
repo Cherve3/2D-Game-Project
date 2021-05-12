@@ -10,11 +10,13 @@
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 #include "gf2d_draw.h"
+#include "gf2d_windows.h"
 #include "gfc_audio.h"
 
 #include "bu_timer.h"
 #include "bu_camera.h"
 #include "bu_ui.h"
+#include "bu_menu.h"
 #include "bu_entity.h"
 #include "bu_player.h"
 #include "bu_npc.h"
@@ -23,11 +25,51 @@
 #include "bu_combat.h"
 #include "bu_hazards.h"
 
+int main_menu_update(Window* win, List* updateList)
+{
+	int i, count;
+	Element* e;
+	if (!win)return 0;
+	if (!updateList)return 0;
+	count = gfc_list_get_count(updateList);
+	for (i = 0; i < count; i++)
+	{
+		e = gfc_list_get_nth(updateList, i);
+		if (!e)continue;
+		slog("updated element index %i", e->index);
+		switch (e->index)
+		{
+		case 51:
+			slog("ok");
+			break;
+		case 52:
+			slog("cancel");
+			break;
+		}
+	}
+	return 0;
+}
+
+void main_menu()
+{
+	Window* win;
+	SJson* json = NULL;
+	json = sj_load("config/testwindow.cfg");
+	win = gf2f_window_load_from_json(json);
+	if (win)
+	{
+		win->update = main_menu_update;
+	}
+	sj_free(json);
+}
+
+
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
-    int done = 0;
+    int menu = 0;
 	int start = 0;
+	int done = 0;
 	int charchoice = 0;
 	int x, y;
 	const Uint8 * keys = SDL_GetKeyboardState(NULL);
@@ -43,20 +85,6 @@ int main(int argc, char * argv[])
     float mf = 0;
     Sprite *mouse;
     Vector4D mouseColor = {255,100,255,200};
-
-	//Menu variables
-	SDL_Event event;
-	SDL_Texture *menu = NULL;
-	char* model_name = NULL;
-	SDL_Texture *loading = NULL;
-	SDL_Texture *load_icon = NULL;
-	SDL_Rect start_rect;
-	SDL_Rect editor_rect;
-	SDL_Rect quit_rect;
-	SDL_Rect load_rect;
-
-	//Sound menu
-	Sound *menu_music = NULL;
 
 	//Item bat vector
 	cpVect cp_vec;
@@ -77,110 +105,19 @@ int main(int argc, char * argv[])
         vector4d(0,0,0,255),
         0);
     gf2d_graphics_set_frame_delay(16);
-	gfc_audio_init(100, 4,1,10,1,0);
+	gfc_audio_init(256, 16,4,1,1,1);
+	gf2d_windows_init(128);
 	//color black
 	vec.w = 255;
 	vec.x = 255;
 	vec.y = 255;
 	vec.z = 255;
-	
-	// Main Menu
-	slog("initializing menu");
-	menu = IMG_LoadTexture(gf2d_graphics_get_renderer(), "images/ui/mainmenu.png");
-	if (!menu){ slog("Main menu texture not created."); SDL_Quit(); exit(0); }
-
-	SDL_RenderClear(gf2d_graphics_get_renderer());
-	SDL_RenderCopy(gf2d_graphics_get_renderer(), menu, NULL, NULL);
-
-	start_rect.h = 70;
-	start_rect.w = 270;
-	start_rect.x = resolution.x/3.3;//250
-	start_rect.y = resolution.y/3 ;//230
-
-	editor_rect.h = 70;
-	editor_rect.w = 270;
-	editor_rect.x = resolution.x / 3.3;// 250
-	editor_rect.y = resolution.y / 1.8;//350
-
-	quit_rect.h = 70;
-	quit_rect.w = 270;
-	quit_rect.x = resolution.x / 3.3;// 250
-	quit_rect.y = resolution.y / 1.35;//350
-
-	menu_music = gfc_sound_load("audio/507747__magmi-soundtracks__hybrid-action-music-01.wav", 1, 0);
-	gfc_sound_play(menu_music, -1, 0.3, -1, -1);
-	slog("Main Menu loaded");
-	
-	while (!start)
-	{
-		SDL_RenderPresent(gf2d_graphics_get_renderer());
-		if (SDL_PollEvent(&event))
-		{/*
-			if (event.type == SDL_MOUSEMOTION)
-			{
-				x = event.motion.x;
-				y = event.motion.y;
-
-				if ((x > start_rect.x) && (x < start_rect.x + start_rect.w) &&
-					(y > start_rect.y) && (y < start_rect.y + start_rect.h))
-				{
-					slog("Hovering over start");
-				}
-
-				if ((x > editor_rect.x) && (x < editor_rect.x + editor_rect.w) &&
-					(y > editor_rect.y) && (y < editor_rect.y + editor_rect.h))
-				{
-					slog("Hovering over editor");
-				}
-
-				if ((x > quit_rect.x) && (x < quit_rect.x + quit_rect.w) &&
-					(y > quit_rect.y) && (y < quit_rect.y + quit_rect.h))
-				{
-					slog("Hovering over Quit");
-				}
-			}*/
-			if (event.type == SDL_MOUSEBUTTONDOWN)
-			{
-				x = event.button.x;
-				y = event.button.y;
-
-				if (event.button.button == SDL_BUTTON_LEFT)
-				{
-					if ((x > start_rect.x) && (x < start_rect.x + start_rect.w) &&
-						(y > start_rect.y) && (y < start_rect.y + start_rect.h))
-					{
-						slog("Pressed Start button");
-						start = 1;
-						gfc_sound_clear_all();
-					}
-
-					if ((x > editor_rect.x) && (x < editor_rect.x + editor_rect.w) &&
-						(y > editor_rect.y) && (y < editor_rect.y + editor_rect.h))
-					{
-						slog("Pressed Editor button");
-						start = -1;
-						gfc_sound_clear_all();
-					}
-
-					if ((x > quit_rect.x) && (x < quit_rect.x + quit_rect.w) &&
-						(y > quit_rect.y) && (y < quit_rect.y + quit_rect.h))
-					{
-						slog("Pressed Quit button");
-						gfc_sound_clear_all();
-						SDL_DestroyRenderer(gf2d_graphics_get_renderer());
-						SDL_DestroyTexture(menu);
-						done = 1;
-						SDL_Quit();
-						return 0;
-					}
-				}
-			}
-		}
-	}
+	//main_menu();
+	start = open_menu(resolution);
 	
 	if (start == 1)
 	{
-		gf2d_sprite_init(512);
+		gf2d_sprite_init(1024);
 		entity_manager_init(100);
 		item_manager_init(50);
 		level_init();
@@ -212,11 +149,12 @@ int main(int argc, char * argv[])
 		cp_vec.x = 500;
 		cp_vec.y = 200;
 		item_new("item_bat", weapon, cp_vec);
-		cp_vec.x = 500;
-		cp_vec.y = 500;
-		new_hazard("puddle", cp_vec);
+		//cp_vec.x = 500;
+		//cp_vec.y = 500;
+		//new_hazard("puddle", cp_vec);
 		slog_sync();
 		Vector2D start, end, position;
+
 		/*main game loop*/
 		while (!done)
 		{
@@ -226,6 +164,8 @@ int main(int argc, char * argv[])
 			mf += 0.1;
 			if (mf >= 16.0)mf = 0;
 
+			gf2d_windows_update_all();
+			
 			entity_manager_think_entities();
 			entity_manager_update_entities();
 
@@ -235,7 +175,7 @@ int main(int argc, char * argv[])
 
 			level_draw();
 			// Player bounds rect
-			gf2d_draw_rect(rect, vec);
+			//gf2d_draw_rect(rect, vec);
 
 			entity_draw_all();
 
@@ -245,6 +185,7 @@ int main(int argc, char * argv[])
 
 			cpSpaceStep(get_level()->space, timeStep);
 
+			gf2d_windows_draw_all();
 			gf2d_sprite_draw(
 				mouse,
 				vector2d(mx, my),

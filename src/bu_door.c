@@ -11,7 +11,7 @@
 void door_touch(Entity *self, Entity *player)
 {
 	if (!self) return;
-	slog("Player touch: %s", player->name);
+	//slog("Player touch: %s", player->name);
 	if (player == get_player()->ent)
 	{
 		level_load(self->data);

@@ -62,7 +62,8 @@ void player_controls(Entity *self)
 	Uint32 x, y;
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	SDL_GetMouseState(&x, &y);
-
+	self->velocity.x = 0.0;
+	self->velocity.y = 0.0;
 	// Update states
 	if (!keys[SDL_SCANCODE_S] && !keys[SDL_SCANCODE_A] && !keys[SDL_SCANCODE_D] && !keys[SDL_SCANCODE_W] && 
 		!(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) && !(SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)))
@@ -100,10 +101,7 @@ void player_controls(Entity *self)
 		if (keys[SDL_SCANCODE_W])
 			self->velocity.y = -100.0;
 	}
-	else {
-		self->velocity.x = 0.0;
-		self->velocity.y = 0.0;
-	}
+
 	// Controls
 	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
 	{

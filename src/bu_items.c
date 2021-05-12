@@ -309,8 +309,13 @@ void item_create(TextWord *item_name, ItemType type, Item *item)
 		slog("info is null");
 
 	item->_inuse = true;
-	item->picked_up = false;
 	item->type = type;
+
+	if(item->type == hazard)
+		item->picked_up = true;
+	else
+		item->picked_up = false;
+	
 	item->name = sj_get_string_value(sj_object_get_value(info, "name"));
 	item->description = sj_get_string_value(sj_object_get_value(info, "description"));
 	sj_get_integer_value(sj_object_get_value(info, "armor"), &item->armor);

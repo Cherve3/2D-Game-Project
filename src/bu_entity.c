@@ -131,7 +131,7 @@ void entity_draw(Entity *ent)
 	Vector2D drawPosition, offset;
 	Vector2D money_scale, book_scale, item_scale;
 	Vector4D vec;
-	int debug = 1;
+	int debug = 0;
 
 	drawPosition.x = 0; 
 	drawPosition.y = 0;
